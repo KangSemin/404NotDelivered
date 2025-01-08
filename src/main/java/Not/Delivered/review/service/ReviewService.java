@@ -5,6 +5,7 @@ import Not.Delivered.purchase.repository.PurchaseRepository;
 import Not.Delivered.review.OnlyOneDateException;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
+import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.review.domain.Review;
 import Not.Delivered.review.repository.ReviewRepository;
 import Not.Delivered.shop.domain.Shop;
@@ -56,5 +57,17 @@ public class ReviewService {
     Review.ownerValidate(review, userId);
     reviewRepository.delete(review);
 
+  }
+
+  public ReviewDto updateReview(Long userId, Long reviewId, ReviewUpdateRequestDto requestDto) {
+    Review review = reviewRepository.findById(reviewId)
+        .orElseThrow(()-> new IllegalArgumentException("Review not fount with ID:" + reviewId));
+
+    Review.ownerValidate(review,userId);
+
+    review.setReviewContent(requestDto.reviewContent());
+    review.setStartPoint(requestDto.starPoint());
+
+    return ReviewDto.convertDto(review);
   }
 }

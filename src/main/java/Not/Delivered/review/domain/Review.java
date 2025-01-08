@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -31,9 +32,11 @@ public class Review extends BaseTime {
   @Column(name = "review_id", nullable = false)
   private Long reviewId;
 
+  @Setter
   @Column(name = "star_point", nullable = false)
   private Long startPoint;
 
+  @Setter
   @Column(name = "review_content", nullable = false)
   private String reviewContent;
 
@@ -45,7 +48,6 @@ public class Review extends BaseTime {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  //OndeleteOption 고민
   @ManyToOne
   @JoinColumn(name = "shop_id", nullable = false)
   private Shop shop;
@@ -61,20 +63,19 @@ public class Review extends BaseTime {
     this.shop = shop;
   }
 
-  public static void validReview(Long userId, Purchase purchase)
-  {
-    if(!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)){
+  public static void validReview(Long userId, Purchase purchase) {
+    if (!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
       throw new IllegalArgumentException("배달 완료 이후에 리뷰 작성이 가능합니다.");
     }
     LocalDateTime localDateTime = purchase.getCreatedAt().plusDays(7);
-    if(LocalDateTime.now().isAfter(localDateTime)) {
+    if (LocalDateTime.now().isAfter(localDateTime)) {
       throw new IllegalArgumentException("주문 후 7일 이내에 작성해야 합니다.");
     }
     if (!purchase.getPurchaseUser().getUserId().equals(userId)) {
       throw new OwnerDataException("해당 주문의 유저만 리뷰를 작성할 수 있습니다.");
     }
 
-    if (purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
+    if (!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
       throw new IllegalArgumentException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
     }
   }
