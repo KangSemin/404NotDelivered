@@ -27,7 +27,7 @@ public class AuthController {
 	private final JwtConfig jwtConfig;
 	private final LogoutService logoutService;
 
-	@PostMapping("/users")
+	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<Map<String,Object>>> signup(@RequestBody SignupRequestDto signupRequestDto) {
 		User user = authService.signUpUser(signupRequestDto);
 		String token = jwtConfig.generateToken(user.getUserId(), user.getUserStatus());
