@@ -1,6 +1,7 @@
 package Not.Delivered.auth.service;
 
 
+import Not.Delivered.auth.dto.LoginRequestDto;
 import Not.Delivered.auth.dto.SignupRequestDto;
 import Not.Delivered.common.config.PasswordEncoder;
 import Not.Delivered.user.domain.User;
@@ -29,4 +30,14 @@ public class AuthService {
 	}
 
 
+  public User login(LoginRequestDto request) {
+		User user = userRepository.findByEmail(request.getEmail())
+				.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 이메일입니다."));
+
+		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
+
+		return user;
+  }
 }
