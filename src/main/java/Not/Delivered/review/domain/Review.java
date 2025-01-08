@@ -63,6 +63,9 @@ public class Review extends BaseTime {
 
   public static void validReview(Long userId, Purchase purchase)
   {
+    if(!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)){
+      throw new IllegalArgumentException("배달 완료 이후에 리뷰 작성이 가능합니다.");
+    }
     LocalDateTime localDateTime = purchase.getCreatedAt().plusDays(7);
     if(LocalDateTime.now().isAfter(localDateTime)) {
       throw new IllegalArgumentException("주문 후 7일 이내에 작성해야 합니다.");
