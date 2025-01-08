@@ -13,7 +13,4 @@ public class UserUpdateDto {
 
 	private String password;
 
-	// 기타 업데이트 가능한 필드들
-
-	// Getter
 }

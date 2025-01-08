@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -18,7 +19,9 @@ public class User extends BaseTime {
 	@Column(name = "user_id")
 	private Long userId;
 
-	@Column(name = "user_name", nullable = false)
+  //    // 필요한 경우에만 Setter 메서드 구현
+  @Setter
+  @Column(name = "user_name", nullable = false)
 	private String userName;
 
 	@Column(name = "email", unique = true, nullable = false)
@@ -52,27 +55,6 @@ public class User extends BaseTime {
 	@Column(name = "is_withdrawal")
 	private Boolean isWithdrawal;
 
-//    // 필요한 경우에만 Setter 메서드 구현
-//    public void setUserName(String userName) {
-//        this.userName = userName;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    // 비밀번호 변경 메서드
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public void setUserStatus(UserStatus userStatus) {
-//        this.userStatus = userStatus;
-//    }
-//
-//    public void setIsWithdrawal(Boolean isWithdrawal) {
-//        this.isWithdrawal = isWithdrawal;
-//    }
 
 	// 주소 정보 업데이트 메서드
 	public void updateAddress(String city, String state, String street, String detailedAddress1, String detailedAddress2) {
@@ -82,11 +64,6 @@ public class User extends BaseTime {
 		this.detailedAddress1 = detailedAddress1;
 		this.detailedAddress2 = detailedAddress2;
 	}
-//
-//    // 전화번호 변경 메서드
-//    public void setPhoneNumber(String phoneNumber) {
-//        this.phoneNumber = phoneNumber;
-//    }
 
 	// equals and hashCode 재정의
 	@Override

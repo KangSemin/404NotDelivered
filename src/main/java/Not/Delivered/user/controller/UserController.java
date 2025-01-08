@@ -24,16 +24,12 @@ public class UserController {
 	@PatchMapping
 	public ResponseEntity<ApiResponse<User>> updateUser(@RequestAttribute Long userId,
 														@Valid @RequestBody UserUpdateDto userUpdateDto) {
-		// 에러 처리 로직
-		try {
-			User updatedUser = userService.updateUser(userId, userUpdateDto);
-			return ResponseEntity.ok(
-					ApiResponse.success(HttpStatus.OK, "회원정보가 성공적으로 수정되었습니다.", updatedUser)
-			);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "회원정보 수정 중 오류가 발생했습니다."));
-		}
+
+		User updatedUser = userService.updateUser(userId, userUpdateDto);
+
+		return ResponseEntity.ok(
+				ApiResponse.success(HttpStatus.OK, "회원정보가 성공적으로 수정되었습니다.", updatedUser)
+		);
 	}
 
 	// 내 정보 조회
