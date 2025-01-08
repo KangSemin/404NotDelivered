@@ -4,12 +4,11 @@ package Not.Delivered.common.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtConfig {
@@ -17,7 +16,7 @@ public class JwtConfig {
 	private final Long expiration;
 	private final SecretKey key;
 
-	public JwtConfig(@Value("%{jwt.secret}") String secret, @Value("%{jwt.expiration}")Long expiration) {
+	public JwtConfig(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}")Long expiration) {
 		this.expiration =expiration;
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
