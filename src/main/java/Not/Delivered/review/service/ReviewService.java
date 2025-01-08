@@ -3,7 +3,6 @@ package Not.Delivered.review.service;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.repository.PurchaseRepository;
 import Not.Delivered.review.OnlyOneDateException;
-import Not.Delivered.review.OwnerDataException;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
 import Not.Delivered.review.domain.Review;
@@ -54,11 +53,7 @@ public class ReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new IllegalArgumentException("Review not fount with ID:" + reviewId));
 
-    //본인의 리뷰가 아니면 삭제할 수 없음
-    if (!review.getUser().getUserId().equals(userId)) {
-      throw new OwnerDataException("본인의 리뷰만 삭제할 수 있습니다.");
-    }
-
+    Review.ownerValidate(review, userId);
     reviewRepository.delete(review);
 
   }

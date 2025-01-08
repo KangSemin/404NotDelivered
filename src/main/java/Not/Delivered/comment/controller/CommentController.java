@@ -25,7 +25,7 @@ public class CommentController {
   @PostMapping
   public ResponseEntity<ApiResponse<CommentDto>> createComment(@RequestAttribute Long userId,
       @RequestBody CommentCreateRequestDto requestDto,
-      @PathVariable("reviewId") Long reviewId) {
+      @PathVariable Long reviewId) {
     CommentDto comment = commentService.createComment(userId, reviewId, requestDto);
     ApiResponse<CommentDto> apiResponse = ApiResponse.success(HttpStatus.CREATED, "코멘트 생성 성공",
         comment);
@@ -36,7 +36,7 @@ public class CommentController {
 
   @DeleteMapping("{commentId}")
   public ResponseEntity<ApiResponse<String>> deleteComment(@PathVariable Long commentId,
-      @PathVariable("reviewId") Long reviewId,
+      @PathVariable Long reviewId,
       @RequestAttribute Long userId) {
     commentService.deleteComment(userId,reviewId,commentId);
     ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "코멘트 삭제 성공", null);

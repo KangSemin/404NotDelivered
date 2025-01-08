@@ -78,4 +78,10 @@ public class Review extends BaseTime {
       throw new IllegalArgumentException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
     }
   }
+
+  public static void ownerValidate(Review review, Long userId) {
+    if (!review.getUser().getUserId().equals(userId)) {
+      throw new OwnerDataException("본인의 리뷰만 삭제할 수 있습니다.");
+    }
+  }
 }
