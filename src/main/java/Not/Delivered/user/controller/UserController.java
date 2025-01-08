@@ -18,6 +18,7 @@ public class UserController {
 
 	private final UserService userService;
 
+//test
 
 	// 회원정보수정
 	@PatchMapping
