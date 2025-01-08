@@ -1,9 +1,11 @@
 package Not.Delivered.auth.controller;
 
+import Not.Delivered.auth.dto.LoginRequestDto;
 import Not.Delivered.auth.dto.SignupRequestDto;
 import Not.Delivered.auth.service.AuthService;
 import Not.Delivered.common.config.JwtConfig;
 import Not.Delivered.common.dto.ApiResponse;
+import Not.Delivered.user.domain.User;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,18 @@ public class AuthController {
 		response.put("token",token);
 
 		return ResponseEntity.ok(ApiResponse.success(HttpStatus.CREATED,"회원 가입 성공!",response));
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<ApiResponse<Map<String,Object>>> login(@RequestBody LoginRequestDto loginRequestDto) {
+		User user = authService.login(loginRequestDto);
+		String token = jwtConfig.generateToken(user.getUserId());
+
+		Map<String,Object> response = new HashMap<>();
+		response.put("userId",user.getUserId());
+		response.put("token",token);
+
+		return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK,"로그인 성공!",response));
 	}
 
 
