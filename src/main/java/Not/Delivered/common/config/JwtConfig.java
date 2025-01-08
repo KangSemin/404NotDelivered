@@ -1,5 +1,6 @@
 package Not.Delivered.common.config;
 
+import Not.Delivered.user.domain.UserStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -21,12 +22,15 @@ public class JwtConfig {
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateToken(Long userId) {
+	public String generateToken(Long userId, UserStatus userStatus) {
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + expiration) ;
 
+		Claims claims = Jwts.claims().setSubject(userId.toString());
+		claims.put("userStatus",userStatus);
+
 		return Jwts.builder()
-				.setSubject(userId.toString())
+				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(expiryDate)
 				.signWith(key)
@@ -41,6 +45,18 @@ public class JwtConfig {
 				.getBody();
 
 		return Long.parseLong(claims.getSubject());
+	}
+
+	public UserStatus getUserStatusFromToken(String token) {
+
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+
+		String userStatus = claims.get("userStatus", String.class);
+		return UserStatus.valueOf(userStatus);
 	}
 
 	public long getExpiration(String token) {
