@@ -1,6 +1,5 @@
 package Not.Delivered.common.config;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -17,7 +16,7 @@ public class JwtConfig {
 	private final SecretKey key;
 
 	public JwtConfig(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}")Long expiration) {
-		this.expiration =expiration;
+		this.expiration = expiration;
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
