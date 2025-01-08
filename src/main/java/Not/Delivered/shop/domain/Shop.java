@@ -14,12 +14,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalTime;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "shop")
 @Getter
+@NoArgsConstructor
 public class Shop {
 
   @Id
@@ -29,7 +32,7 @@ public class Shop {
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
-  private User userId;
+  private User ownerUser;
 
   @Column(name = "shop_name", nullable = false)
   private String shopName;
@@ -44,7 +47,6 @@ public class Shop {
       @AttributeOverride(name = "street", column = @Column(name = "street", nullable = false)),
       @AttributeOverride(name = "detailAddress1", column = @Column(name = "detail_address1")),
       @AttributeOverride(name = "detailAddress2", column = @Column(name = "detail_address2"))
-
   })
   private Address address;
 
@@ -58,9 +60,24 @@ public class Shop {
   private LocalTime closeTime;
 
   @Column(name = "min_order_price", nullable = false)
-  private Integer minOrderPrice;
+  private Long minOrderPrice;
 
   @Column(name = "is_closing", nullable = false, columnDefinition = "TINYINT(1)")
   @ColumnDefault("false")
   private boolean isClosing;
+
+  @Builder
+  public Shop(User ownerUser, String shopName, String introduce, Address address,
+      String phoneNumber,
+      LocalTime openTime, LocalTime closeTime, Long minOrderPrice, boolean isClosing) {
+    this.ownerUser = ownerUser;
+    this.shopName = shopName;
+    this.introduce = introduce;
+    this.address = address;
+    this.phoneNumber = phoneNumber;
+    this.openTime = openTime;
+    this.closeTime = closeTime;
+    this.minOrderPrice = minOrderPrice;
+    this.isClosing = isClosing;
+  }
 }
