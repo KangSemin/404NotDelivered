@@ -12,7 +12,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor // JPA 연동 위해 필수적
 @Table(name = "user")
 public class User extends BaseTime {
 
