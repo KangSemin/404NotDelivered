@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,29 +23,39 @@ import lombok.NoArgsConstructor;
 @Table(name = "review")
 public class Review extends BaseTime {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "review_id", nullable = false)
-	private Long reviewId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "review_id", nullable = false)
+  private Long reviewId;
 
-	@Column(name = "star_point", nullable = false)
-	private Long startPoint;
+  @Column(name = "star_point", nullable = false)
+  private Long startPoint;
 
-	@Column(name = "review_content", nullable = false)
-	private String reviewContent;
+  @Column(name = "review_content", nullable = false)
+  private String reviewContent;
 
-	//OndeleteOption 고민 > SET_DEFAULT 적용방법?
-	@OneToOne
-	@JoinColumn(name = "purchase_id", nullable = false)
-	private Purchase purchase;
+  //OndeleteOption 고민 > SET_DEFAULT 적용방법?
+  @OneToOne
+  @JoinColumn(name = "purchase_id", nullable = false, unique = true)
+  private Purchase purchase;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-	//OndeleteOption 고민
-	@ManyToOne
-	@JoinColumn(name = "shop_id", nullable = false)
-	private Shop shop;
+  //OndeleteOption 고민
+  @ManyToOne
+  @JoinColumn(name = "shop_id", nullable = false)
+  private Shop shop;
 
+  @Builder
+  public Review(Long reviewId, Long startPoint, String reviewContent, Purchase purchase, User user,
+      Shop shop) {
+    this.reviewId = reviewId;
+    this.startPoint = startPoint;
+    this.reviewContent = reviewContent;
+    this.purchase = purchase;
+    this.user = user;
+    this.shop = shop;
+  }
 }
