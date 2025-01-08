@@ -40,5 +40,4 @@ out/
 .vscode/
 
 ### Spring boot ###
-*.properties
 *.yml
