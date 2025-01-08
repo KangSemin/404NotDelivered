@@ -1,6 +1,5 @@
 package Not.Delivered.common.config;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -13,11 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtConfig {
 
+
 	private final Long expiration;
 	private final SecretKey key;
 
 	public JwtConfig(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}")Long expiration) {
-		this.expiration =expiration;
+		this.expiration = expiration;
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
@@ -41,6 +41,15 @@ public class JwtConfig {
 				.getBody();
 
 		return Long.parseLong(claims.getSubject());
+	}
+
+	public long getExpiration(String token) {
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		return claims.getExpiration().getTime() - new Date().getTime();
 	}
 
 	public boolean validateToken(String token) {
