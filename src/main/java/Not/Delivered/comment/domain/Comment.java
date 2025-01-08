@@ -26,44 +26,43 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "comment")
 public class Comment extends BaseTime {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_id")
-	private Long commentId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "comment_id")
+  private Long commentId;
 
-	@Column(name = "comment_content", nullable = false)
-	private String commentContent;
+  @Column(name = "comment_content", nullable = false)
+  private String commentContent;
 
-	//OndeleteOption 고민
-	@OneToOne
-	@JoinColumn(name = "review_id", columnDefinition = "BIGINT DEFAULT -1")
-	@OnDelete(action = OnDeleteAction.SET_DEFAULT)
-	private Review review;
+  @OneToOne
+  @JoinColumn(name = "review_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Review review;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
-	@Builder
-	public Comment(Long commentId, String commentContent, Review review, User user) {
-		this.commentId = commentId;
-		this.commentContent = commentContent;
-		this.review = review;
-		this.user = user;
-	}
+  @Builder
+  public Comment(Long commentId, String commentContent, Review review, User user) {
+    this.commentId = commentId;
+    this.commentContent = commentContent;
+    this.review = review;
+    this.user = user;
+  }
 
-	public static void commentReviewAndUserValidate(Comment comment, Long reviewId, Long userId) {
-		if(!comment.getReview().getReviewId().equals(reviewId)){
-			throw new IllegalArgumentException("Not just a comment in that review.");
-		}
-		if(!comment.getUser().getUserId().equals(userId)){
-			throw new OwnerDataException("Only your comments are accessible.");
-		}
-	}
+  public static void commentReviewAndUserValidate(Comment comment, Long reviewId, Long userId) {
+    if (!comment.getReview().getReviewId().equals(reviewId)) {
+      throw new IllegalArgumentException("Not just a comment in that review.");
+    }
+    if (!comment.getUser().getUserId().equals(userId)) {
+      throw new OwnerDataException("Only your comments are accessible.");
+    }
+  }
 
-	public static void shopOwnerValidate(Shop shop, Long userId) {
-		if(shop.getOwnerUser().getUserId().equals(userId)){
-			throw new OwnerDataException("Only store owner can fill it out.");
-		}
-	}
+  public static void shopOwnerValidate(Shop shop, Long userId) {
+    if (shop.getOwnerUser().getUserId().equals(userId)) {
+      throw new OwnerDataException("Only store owner can fill it out.");
+    }
+  }
 }

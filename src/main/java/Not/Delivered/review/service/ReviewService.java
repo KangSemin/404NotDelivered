@@ -2,6 +2,7 @@ package Not.Delivered.review.service;
 
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.repository.PurchaseRepository;
+import Not.Delivered.review.OnlyOneDateException;
 import Not.Delivered.review.OwnerDataException;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
@@ -25,6 +26,9 @@ public class ReviewService {
 
 
   public ReviewDto createReview(Long userId, ReviewCreateRequestDto requestDto) {
+    if(reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())){
+      throw  new OnlyOneDateException("One Purchase, One Review");
+    }
     Purchase purchase = purchaseRepository.findById(requestDto.purchaseId()).orElseThrow(
         () -> new IllegalArgumentException(
             "Purchase not found with ID:" + requestDto.purchaseId()));
