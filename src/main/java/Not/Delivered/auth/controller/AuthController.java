@@ -29,11 +29,12 @@ public class AuthController {
 
 	@PostMapping("/users")
 	public ResponseEntity<ApiResponse<Map<String,Object>>> signup(@RequestBody SignupRequestDto signupRequestDto) {
-		Long userId = authService.signUpUser(signupRequestDto);
-		String token = jwtConfig.generateToken(userId);
+		User user = authService.signUpUser(signupRequestDto);
+		String token = jwtConfig.generateToken(user.getUserId(), user.getUserStatus());
 
 		Map<String,Object> response = new HashMap<>();
-		response.put("userId",userId);
+		response.put("userId",user.getUserId());
+
 		response.put("token",token);
 
 		ApiResponse<Map<String, Object>> success = ApiResponse.success(HttpStatus.CREATED, "회원 가입 성공!",
@@ -45,10 +46,11 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<Map<String,Object>>> login(@RequestBody LoginRequestDto loginRequestDto) {
 		User user = authService.login(loginRequestDto);
-		String token = jwtConfig.generateToken(user.getUserId());
+		String token = jwtConfig.generateToken(user.getUserId(),user.getUserStatus());
 
 		Map<String,Object> response = new HashMap<>();
 		response.put("userId",user.getUserId());
+		response.put("userStatus",user.getUserStatus());
 		response.put("token",token);
 
 		return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK,"로그인 성공!",response));

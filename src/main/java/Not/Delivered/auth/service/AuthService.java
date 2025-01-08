@@ -18,7 +18,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 
 
-	public Long signUpUser(SignupRequestDto request) {
+	public User signUpUser(SignupRequestDto request) {
 		String encodedPassword = passwordEncoder.encode(request.getPassword());
 
 		User user = User.builder()
@@ -29,7 +29,7 @@ public class AuthService {
 				.address(request.getAddress())
 				.build();
 
-		return userRepository.save(user).getUserId();
+		return userRepository.save(user);
 	}
 
 
