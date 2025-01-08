@@ -35,7 +35,7 @@ public class ReviewController {
   public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId,
       @RequestAttribute Long userId) throws Exception {
     reviewService.deleteReview(userId, reviewId);
-    ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", "empty");
+    ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", null);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
