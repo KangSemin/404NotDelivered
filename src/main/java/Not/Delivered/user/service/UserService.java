@@ -13,43 +13,43 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-	private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-	public Optional<User> getUserById(Long userId){
-		if (userId == null) {
-			throw new IllegalArgumentException("User ID and user details must not be null");
-		}
+  public Optional<User> getUserById(Long userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID and user details must not be null");
+    }
 
-		return userRepository.findById(userId);
-	}
+    return userRepository.findById(userId);
+  }
 
-	public Optional<User> getUserByEmail(String email){
-		if (email == null) {
-			return Optional.empty();
-		}
+  public Optional<User> getUserByEmail(String email) {
+    if (email == null) {
+      return Optional.empty();
+    }
 
-		return userRepository.findByEmail(email);
-	}
+    return userRepository.findByEmail(email);
+  }
 
-	public User updateUser(Long userId, UserUpdateDto userDetails){
+  public User updateUser(Long userId, UserUpdateDto userDetails) {
 
-		if (userId == null || userDetails == null) {
-			throw new IllegalArgumentException("User ID and user details must not be null");
-		}
+    if (userId == null || userDetails == null) {
+      throw new IllegalArgumentException("User ID and user details must not be null");
+    }
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new TempUserNotFoundException("User Not Found.")); // 정식 Exception 추가되면 관리
+    User user = userRepository.findById(userId)
+        .orElseThrow(
+            () -> new TempUserNotFoundException("User Not Found.")); // 정식 Exception 추가되면 관리
 
-		return userRepository.save(user);
-	}
+    return userRepository.save(user);
+  }
 
-	public void deleteUser(Long userId){
-		if (userId == null) {
-			throw new IllegalArgumentException("User ID must not be null");
-		}
+  public void deleteUser(Long userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID must not be null");
+    }
 
-		userRepository.deleteById(userId);
-	}
-
+    userRepository.deleteById(userId);
+  }
 
 }

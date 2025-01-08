@@ -1,6 +1,7 @@
 package Not.Delivered.common.config;
 
 
+import Not.Delivered.auth.service.LogoutService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +17,15 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtConfig jwtConfig;
+	private final LogoutService logoutService;
+
 	private final String BEARER = "Bearer ";
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain) throws ServletException, IOException {
+
+
 		String requestURI = request.getRequestURI();
 
 		// 인증이 필요없는 경로는 통과
@@ -39,6 +45,13 @@ public class JwtFilter extends OncePerRequestFilter {
 		try {
 			String token = authHeader.substring(BEARER.length());
 			if (jwtConfig.validateToken(token)) {
+
+				if(logoutService.isBlacklisted(token)){
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					response.getWriter().write("블랙리스트에 등록된 토큰입니다.");
+					return;
+				}
+
 				Long userId = jwtConfig.getUserIdFromToken(token);
 				request.setAttribute("userId", userId);
 				filterChain.doFilter(request, response);

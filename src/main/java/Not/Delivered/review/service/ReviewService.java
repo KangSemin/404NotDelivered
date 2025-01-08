@@ -1,7 +1,6 @@
 package Not.Delivered.review.service;
 
 import Not.Delivered.purchase.domain.Purchase;
-import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.purchase.repository.PurchaseRepository;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
@@ -31,15 +30,7 @@ public class ReviewService {
         () -> new IllegalArgumentException(
             "Purchase not found with ID:" + requestDto.purchaseId()));
 
-    // 주문한유저와 접속한 유저가 동일인이 아닐 경우 예외처리, 엔티티에 위임
-    if (!purchase.getPurchaseUser().getUserId().equals(userId)) {
-      throw new AccessDeniedException("해당 주문의 유저만 리뷰를 작성할 수 있습니다.");
-    }
-
-    // 주문 상태가 '배달완료'가 아닐때 예외처리
-    if (purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
-      throw new AccessDeniedException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
-    }
+    Review.validReview(userId, purchase);
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("User not found with ID:" + userId));

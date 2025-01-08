@@ -2,6 +2,7 @@ package Not.Delivered.review.domain;
 
 import Not.Delivered.common.entity.BaseTime;
 import Not.Delivered.purchase.domain.Purchase;
+import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.user.domain.User;
 import jakarta.persistence.Column;
@@ -13,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +37,6 @@ public class Review extends BaseTime {
   @Column(name = "review_content", nullable = false)
   private String reviewContent;
 
-  //OndeleteOption 고민 > SET_DEFAULT 적용방법?
   @OneToOne
   @JoinColumn(name = "purchase_id", nullable = false, unique = true)
   private Purchase purchase;
@@ -57,5 +59,20 @@ public class Review extends BaseTime {
     this.purchase = purchase;
     this.user = user;
     this.shop = shop;
+  }
+
+  public static void validReview(Long userId, Purchase purchase) throws AccessDeniedException
+  {
+    LocalDateTime localDateTime = purchase.getCreatedAt().plusDays(7);
+    if(LocalDateTime.now().isAfter(localDateTime)) {
+      throw new AccessDeniedException("주문 후 7일 이내에 작성해야 합니다.");
+    }
+    if (!purchase.getPurchaseUser().getUserId().equals(userId)) {
+      throw new AccessDeniedException("해당 주문의 유저만 리뷰를 작성할 수 있습니다.");
+    }
+
+    if (purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
+      throw new AccessDeniedException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
+    }
   }
 }
