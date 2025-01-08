@@ -1,5 +1,6 @@
 package Not.Delivered.user.domain;
 
+import Not.Delivered.common.entity.Address;
 import Not.Delivered.common.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -21,7 +22,6 @@ public class User extends BaseTime {
   private Long userId;
 
   //    // 필요한 경우에만 Setter 메서드 구현
-  @Setter
   @Column(name = "user_name", nullable = false)
 	private String userName;
 
@@ -35,35 +35,32 @@ public class User extends BaseTime {
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "city")
-  private String city;
+	@Column(name = "phone_number")
+	private String phoneNumber;
 
-  @Column(name = "state")
-  private String state;
-
-  @Column(name = "street")
-  private String street;
-
-  @Column(name = "detailed_address1")
-  private String detailedAddress1;
-
-  @Column(name = "detailed_address2")
-  private String detailedAddress2;
-
-  @Column(name = "phone_number")
-  private String phoneNumber;
 
   @Column(name = "is_withdrawal")
   private Boolean isWithdrawal = false ;
 
+	@Embedded
+	@AttributeOverrides({
+			@AttributeOverride(name = "city", column = @Column(name = "city", nullable = false)),
+			@AttributeOverride(name = "state", column = @Column(name = "state", nullable = false)),
+			@AttributeOverride(name = "street", column = @Column(name = "street", nullable = false)),
+			@AttributeOverride(name = "detailAddress1", column = @Column(name = "detail_address1")),
+			@AttributeOverride(name = "detailAddress2", column = @Column(name = "detail_address2"))
 
-	// 주소 정보 업데이트 메서드
-	public void updateAddress(String city, String state, String street, String detailedAddress1, String detailedAddress2) {
-		this.city = city;
-		this.state = state;
-		this.street = street;
-		this.detailedAddress1 = detailedAddress1;
-		this.detailedAddress2 = detailedAddress2;
+	})
+	private Address address;
+
+	@Builder
+	public User(String userName, String email, UserStatus userStatus, String password, String phoneNumber, Address address) {
+		this.userName = userName;
+		this.email = email;
+		this.userStatus = userStatus;
+		this.password = password;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
 	}
 
   // equals and hashCode 재정의

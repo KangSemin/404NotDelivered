@@ -40,8 +40,6 @@ public class UserService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new TempUserNotFoundException("User Not Found.")); // 정식 Exception 추가되면 관리
 
-		user.setUserName(userDetails.getUserName());
-
 		return userRepository.save(user);
 	}
 

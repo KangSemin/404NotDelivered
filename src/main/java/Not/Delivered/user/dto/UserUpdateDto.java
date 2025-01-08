@@ -1,16 +1,22 @@
 package Not.Delivered.user.dto;
 
-import jakarta.validation.constraints.Email;
+
+import Not.Delivered.common.entity.Address;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class UserUpdateDto {
 
+	@NotBlank
 	private String userName;
 
-	@Email(message = "유효한 이메일 주소여야 합니다.")
+	@NotBlank
 	private String email;
 
-	private String password;
+	private String phoneNumber;
 
+	private Address address;
 }
