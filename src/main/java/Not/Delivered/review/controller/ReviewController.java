@@ -24,16 +24,18 @@ public class ReviewController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<ReviewDto>> createReview(@RequestAttribute Long userId,
-      @RequestBody ReviewCreateRequestDto requestDto) throws Exception {
+      @RequestBody ReviewCreateRequestDto requestDto) {
     ReviewDto review = reviewService.createReview(userId, requestDto);
     ApiResponse<ReviewDto> apiResponse = ApiResponse.success(HttpStatus.CREATED, "리뷰 생성 성공",
         review);
     return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
   }
 
+  //TODO 리뷰 수정 기능
+
   @DeleteMapping("/{reviewId}")
   public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId,
-      @RequestAttribute Long userId) throws Exception {
+      @RequestAttribute Long userId) {
     reviewService.deleteReview(userId, reviewId);
     ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", null);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
