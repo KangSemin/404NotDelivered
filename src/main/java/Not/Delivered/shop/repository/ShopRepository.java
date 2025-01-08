@@ -4,4 +4,6 @@ import Not.Delivered.shop.domain.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShopRepository extends JpaRepository<Shop, Long> {
+
+  int countByOwnerUser_UserId(Long userId);
 }
