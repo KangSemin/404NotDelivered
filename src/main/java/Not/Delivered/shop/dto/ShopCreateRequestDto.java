@@ -33,16 +33,4 @@ public class ShopCreateRequestDto {
   @NotNull(message = "최소 주문 금액은 필수 입력 값입니다.")
   private final Long minOrderPrice;
 
-  @Builder
-  public ShopCreateRequestDto(Long userId, String shopName, String introduce, Address address,
-      String phoneNumber, LocalTime openTime, LocalTime closeTime, Long minOrderPrice) {
-    this.userId = userId;
-    this.shopName = shopName;
-    this.introduce = introduce;
-    this.address = address;
-    this.phoneNumber = phoneNumber;
-    this.openTime = openTime;
-    this.closeTime = closeTime;
-    this.minOrderPrice = minOrderPrice;
-  }
 }
