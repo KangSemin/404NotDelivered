@@ -61,11 +61,7 @@ public class PurchaseService {
       throw new AccessDeniedException("해당 주문을 취소할 권한이 없습니다.");
     }
 
-    if (purchase.getPurchaseStatus() != PurchaseStatus.PENDING) {
-      throw new IllegalStateException("대기중인 주문만 취소할 수 있습니다.");
-    }
-
-    purchase.changeStatus(PurchaseStatus.CANCELLED);
+    purchase.cancel();
     purchaseRepository.save(purchase);
   }
 

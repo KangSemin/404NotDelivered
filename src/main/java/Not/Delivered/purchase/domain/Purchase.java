@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Entity
 @Table(name = "purchase")
 @Getter
@@ -38,7 +39,6 @@ public class Purchase extends BaseTime {
 
   // 배달하는 사용자
   @ManyToOne
-  @Setter
   @JoinColumn(name = "delivery_user_id")
   private User deliveringUser;
 
@@ -57,6 +57,10 @@ public class Purchase extends BaseTime {
   @Column(name = "purchase_status", nullable = false)
   private PurchaseStatus purchaseStatus;
 
+  // 주문 취소 여부
+  @Column(name = "is_cancelled", nullable = false)
+  private boolean isCancelled = false;
+
   // 주문 상태 변경 메서드
   public void changeStatus(PurchaseStatus newStatus) {
     if (this.purchaseStatus.canTransitionTo(newStatus)) {
@@ -66,6 +70,18 @@ public class Purchase extends BaseTime {
     }
   }
 
+  // 주문 취소 메서드
+  public void cancel() {
+    if (this.purchaseStatus != PurchaseStatus.PENDING) {
+      throw new IllegalStateException("대기중인 주문만 취소할 수 있습니다.");
+    }
+    this.isCancelled = true;
+  }
+
+  // 배송자 설정 메서드
+  public void setDeliveringUser(User deliveringUser) {
+    this.deliveringUser = deliveringUser;
+  }
 
   // 주문 생성 메서드
   @Builder
