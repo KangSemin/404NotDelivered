@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtConfig {
 
+
 	private final Long expiration;
 	private final SecretKey key;
 
@@ -40,6 +41,15 @@ public class JwtConfig {
 				.getBody();
 
 		return Long.parseLong(claims.getSubject());
+	}
+
+	public long getExpiration(String token) {
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		return claims.getExpiration().getTime() - new Date().getTime();
 	}
 
 	public boolean validateToken(String token) {
