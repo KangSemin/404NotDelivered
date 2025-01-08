@@ -16,7 +16,7 @@ public class Shop {
 	private Long shopId;
 
 	@ManyToOne
-	@Column(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User userId;
 
 	@Column(name = "shop_name", nullable = false)
