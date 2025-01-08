@@ -36,7 +36,10 @@ public class AuthController {
 		response.put("userId",userId);
 		response.put("token",token);
 
-		return ResponseEntity.ok(ApiResponse.success(HttpStatus.CREATED,"회원 가입 성공!",response));
+		ApiResponse<Map<String, Object>> success = ApiResponse.success(HttpStatus.CREATED, "회원 가입 성공!",
+				response);
+
+		return new ResponseEntity<>(success,HttpStatus.CREATED);
 	}
 
 	@PostMapping("/login")
@@ -52,10 +55,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<ApiResponse<Map<String,Object>>> logout(@RequestHeader("Authorization") String token) {
 		String jwt = token.replace("Bearer ","");
 		logoutService.addToBlacklist(jwt);
-		return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK,"로그아웃 성공!",null));
+
+		Map<String,Object> response = new HashMap<>();
+		response.put("token",jwt);
+
+		return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK,"로그아웃 성공!",response));
 	}
 
 }

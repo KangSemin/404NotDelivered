@@ -26,6 +26,7 @@ public class AuthService {
 				.password(encodedPassword)
 				.userName(request.getUsername())
 				.userStatus(request.getUserStatus())
+				.address(request.getAddress())
 				.build();
 
 		return userRepository.save(user).getUserId();
