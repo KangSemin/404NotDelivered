@@ -26,8 +26,8 @@ public class ReviewService {
 
 
   public ReviewDto createReview(Long userId, ReviewCreateRequestDto requestDto) {
-    if(reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())){
-      throw  new OnlyOneDateException("One Purchase, One Review");
+    if (reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())) {
+      throw new OnlyOneDateException("One Purchase, One Review");
     }
     Purchase purchase = purchaseRepository.findById(requestDto.purchaseId()).orElseThrow(
         () -> new IllegalArgumentException(
@@ -43,7 +43,7 @@ public class ReviewService {
             "Shop not found with ID:" + purchase.getShop().getShopId()));
 
     Review review = Review.builder().reviewContent(requestDto.reviewContent())
-        .startPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
+        .starPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
 
     reviewRepository.save(review);
 
@@ -61,12 +61,19 @@ public class ReviewService {
 
   public ReviewDto updateReview(Long userId, Long reviewId, ReviewUpdateRequestDto requestDto) {
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(()-> new IllegalArgumentException("Review not fount with ID:" + reviewId));
+        .orElseThrow(() -> new IllegalArgumentException("Review not fount with ID:" + reviewId));
 
-    Review.ownerValidate(review,userId);
+    Review.ownerValidate(review, userId);
 
-    review.setReviewContent(requestDto.reviewContent());
-    review.setStartPoint(requestDto.starPoint());
+    if (requestDto.reviewContent() != null) {
+      review.setReviewContent(requestDto.reviewContent());
+    }
+
+    if (requestDto.starPoint() != null) {
+      review.setStarPoint(requestDto.starPoint());
+    }
+
+    reviewRepository.save(review);
 
     return ReviewDto.convertDto(review);
   }

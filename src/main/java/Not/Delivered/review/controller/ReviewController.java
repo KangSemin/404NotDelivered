@@ -25,9 +25,8 @@ public class ReviewController {
   private final ReviewService reviewService;
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ReviewDto>> createReview(/*@RequestAttribute Long userId,*/
+  public ResponseEntity<ApiResponse<ReviewDto>> createReview(@RequestAttribute Long userId,
       @RequestBody ReviewCreateRequestDto requestDto) {
-    Long userId = 1L;
     ReviewDto review = reviewService.createReview(userId, requestDto);
     ApiResponse<ReviewDto> apiResponse = ApiResponse.success(HttpStatus.CREATED, "리뷰 생성 성공",
         review);
@@ -36,9 +35,8 @@ public class ReviewController {
 
 
   @DeleteMapping("/{reviewId}")
-  public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId/*,
-      @RequestAttribute Long userId*/) {
-    Long userId = 1L;
+  public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId,
+      @RequestAttribute Long userId) {
     reviewService.deleteReview(userId, reviewId);
     ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", null);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
@@ -46,8 +44,9 @@ public class ReviewController {
 
   @PatchMapping("/{reviewId}")
   public ResponseEntity<ApiResponse<ReviewDto>> updateReview(@PathVariable Long reviewId,
-      @RequestBody ReviewUpdateRequestDto requestDto,
-      @RequestAttribute Long userId) {
+      @RequestBody ReviewUpdateRequestDto requestDto/*,
+      @RequestAttribute Long userId*/) {
+    Long userId = 1L;
     ReviewDto review = reviewService.updateReview(userId,reviewId,requestDto);
     ApiResponse<ReviewDto> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 수정 성공",
         review);

@@ -34,7 +34,7 @@ public class Review extends BaseTime {
 
   @Setter
   @Column(name = "star_point", nullable = false)
-  private Long startPoint;
+  private Long starPoint;
 
   @Setter
   @Column(name = "review_content", nullable = false)
@@ -53,10 +53,10 @@ public class Review extends BaseTime {
   private Shop shop;
 
   @Builder
-  public Review(Long reviewId, Long startPoint, String reviewContent, Purchase purchase, User user,
+  public Review(Long reviewId, Long starPoint, String reviewContent, Purchase purchase, User user,
       Shop shop) {
     this.reviewId = reviewId;
-    this.startPoint = startPoint;
+    this.starPoint = starPoint;
     this.reviewContent = reviewContent;
     this.purchase = purchase;
     this.user = user;
