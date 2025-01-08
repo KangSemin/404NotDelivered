@@ -13,9 +13,8 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
       value =
           """
         SELECT COUNT(*) FROM shop s
-        JOIN user u ON s.user_id = u.user_id
-        AND s.user_id = :userId
-        WHERE s.is_closing = 0
+        WHERE s.user_id = :userId
+        AND s.is_closing = 0
         """,
       nativeQuery = true)
   int countByOwnerUserId(@Param("userId") Long userId);
