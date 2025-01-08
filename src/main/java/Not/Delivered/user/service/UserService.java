@@ -15,37 +15,43 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
-	public User createUser(User user){
-		// 추가적인 비즈니스 로직을 여기에 포함시킬 수 있습니다.
-		return userRepository.save(user);
-	}
-
 	public Optional<User> getUserById(Long userId){
+		if (userId == null) {
+			throw new IllegalArgumentException("User ID and user details must not be null");
+		}
+
 		return userRepository.findById(userId);
 	}
 
-	public List<User> getAllUsers(){
-		return userRepository.findAll();
+	public Optional<User> getUserByEmail(String email){
+		if (email == null) {
+			return Optional.empty();
+		}
+
+		return userRepository.findByEmail(email);
 	}
 
 	public User updateUser(Long userId, UserUpdateDto userDetails){
-		Optional<User> optionalUser = userRepository.findById(userId);
-		if (!optionalUser.isPresent()) {
-			// 사용자 미존재 시 예외 처리 또는 null 반환
-			return null;
-		}
-		User user = optionalUser.get();
 
-//		로직...
+		if (userId == null || userDetails == null) {
+			throw new IllegalArgumentException("User ID and user details must not be null");
+		}
+
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new TempUserNotFoundException("User Not Found.")); // 정식 Exception 추가되면 관리
+
+		user.setUserName(userDetails.getUserName());
 
 		return userRepository.save(user);
 	}
 
 	public void deleteUser(Long userId){
+		if (userId == null) {
+			throw new IllegalArgumentException("User ID must not be null");
+		}
+
 		userRepository.deleteById(userId);
 	}
 
-	public Optional<User> getUserByEmail(String email){
-		return userRepository.findByEmail(email);
-	}
+
 }
