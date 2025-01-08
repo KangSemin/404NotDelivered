@@ -19,26 +19,29 @@ public class ShopService {
   private final ShopRepository shopRepository;
   final int MAX_SHOP_AMOUNT = 3;
 
-  public ShopCreateResponseDto createShop(ShopCreateRequestDto dto) {
-    int shopAmount = shopRepository.countByOwnerUser_UserId(dto.getUserId());
+  public ShopCreateResponseDto createShop(Long userId, ShopCreateRequestDto dto) {
+    int shopAmount = shopRepository.countByOwnerUserId(userId);
 
-    if (shopAmount < MAX_SHOP_AMOUNT) {
+    if (shopAmount >= MAX_SHOP_AMOUNT) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가게는 최대 3개까지만 운영할 수 있습니다.");
     }
 
-    User foundUser = userRepository.findById(dto.getUserId())
-        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    User foundUser =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    Shop newShop = Shop.builder()
-        .ownerUser(foundUser)
-        .shopName(dto.getShopName())
-        .introduce(dto.getIntroduce())
-        .address(dto.getAddress())
-        .phoneNumber(dto.getPhoneNumber())
-        .openTime(dto.getOpenTime())
-        .closeTime(dto.getCloseTime())
-        .minOrderPrice(dto.getMinOrderPrice())
-        .build();
+    Shop newShop =
+        Shop.builder()
+            .ownerUser(foundUser)
+            .shopName(dto.getShopName())
+            .introduce(dto.getIntroduce())
+            .address(dto.getAddress())
+            .phoneNumber(dto.getPhoneNumber())
+            .openTime(dto.getOpenTime())
+            .closeTime(dto.getCloseTime())
+            .minOrderPrice(dto.getMinOrderPrice())
+            .build();
 
     Shop savedShop = shopRepository.save(newShop);
 

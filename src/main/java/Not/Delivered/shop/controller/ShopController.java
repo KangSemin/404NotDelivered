@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,13 +22,12 @@ public class ShopController {
   private final ShopService shopService;
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ShopCreateResponseDto>> createShop(@Valid @RequestBody
-  ShopCreateRequestDto dto) {
-    // TODO 로그인 정보에서 사용자 ID 얻어와서 사용하기
-    ShopCreateResponseDto shopCreateResponseDto = shopService.createShop(dto);
+  public ResponseEntity<ApiResponse<ShopCreateResponseDto>> createShop(
+      @RequestAttribute Long userId, @Valid @RequestBody ShopCreateRequestDto dto) {
+    ShopCreateResponseDto shopCreateResponseDto = shopService.createShop(userId, dto);
 
-    ApiResponse<ShopCreateResponseDto> response = ApiResponse.success(HttpStatus.CREATED, null,
-        shopCreateResponseDto);
+    ApiResponse<ShopCreateResponseDto> response =
+        ApiResponse.success(HttpStatus.CREATED, null, shopCreateResponseDto);
 
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
