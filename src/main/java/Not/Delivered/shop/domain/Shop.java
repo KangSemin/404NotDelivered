@@ -105,4 +105,8 @@ public class Shop {
     this.closeTime = dto.getCloseTime();
     this.minOrderPrice = dto.getMinOrderPrice();
   }
+
+  public void closedShop() {
+    this.isClosing = true;
+  }
 }

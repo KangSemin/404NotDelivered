@@ -93,7 +93,7 @@ public class ShopService {
   public ShopReadResponseDto findByShopId(Long shopId) {
     Shop foundShop =
         shopRepository
-            .findById(shopId)
+            .findByShopIdAndIsClosing(shopId)
             .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
 
     List<Menu> foundMenuList = menuRepository.findAllByShopId(foundShop.getShopId());
@@ -111,13 +111,8 @@ public class ShopService {
   }
 
   @Transactional
-  public ShopUpdateResponseDto updateShop(Long userId, Long shopsId, ShopUpdateRequestDto dto) {
-    Shop foundShop =
-        shopRepository
-            .findById(shopsId)
-            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
-
-    foundShop.validShopOwner(userId, foundShop.getOwnerUser().getUserId());
+  public ShopUpdateResponseDto updateShop(Long userId, Long shopId, ShopUpdateRequestDto dto) {
+    Shop foundShop = foundAndValidate(userId, shopId);
     foundShop.updateShopInfo(dto);
 
     return ShopUpdateResponseDto.builder()
@@ -130,5 +125,22 @@ public class ShopService {
         .minOrderPrice(foundShop.getMinOrderPrice())
         .isClosing(foundShop.isClosing())
         .build();
+  }
+
+  @Transactional
+  public void deleteShop(Long userId, Long shopId) {
+    Shop foundShop = foundAndValidate(userId, shopId);
+    foundShop.closedShop();
+  }
+
+  private Shop foundAndValidate(Long userId, Long shopId) {
+    Shop foundShop =
+        shopRepository
+            .findById(shopId)
+            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+
+    foundShop.validShopOwner(userId, foundShop.getOwnerUser().getUserId());
+
+    return foundShop;
   }
 }
