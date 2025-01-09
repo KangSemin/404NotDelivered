@@ -5,6 +5,7 @@ import Not.Delivered.purchase.repository.PurchaseRepository;
 import Not.Delivered.review.OnlyOneDateException;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
+import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.review.domain.Review;
 import Not.Delivered.review.repository.ReviewRepository;
 import Not.Delivered.shop.domain.Shop;
@@ -25,8 +26,8 @@ public class ReviewService {
 
 
   public ReviewDto createReview(Long userId, ReviewCreateRequestDto requestDto) {
-    if(reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())){
-      throw  new OnlyOneDateException("One Purchase, One Review");
+    if (reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())) {
+      throw new OnlyOneDateException("One Purchase, One Review");
     }
     Purchase purchase = purchaseRepository.findById(requestDto.purchaseId()).orElseThrow(
         () -> new IllegalArgumentException(
@@ -42,7 +43,7 @@ public class ReviewService {
             "Shop not found with ID:" + purchase.getShop().getShopId()));
 
     Review review = Review.builder().reviewContent(requestDto.reviewContent())
-        .startPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
+        .starPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
 
     reviewRepository.save(review);
 
@@ -56,5 +57,18 @@ public class ReviewService {
     Review.ownerValidate(review, userId);
     reviewRepository.delete(review);
 
+  }
+
+  public ReviewDto updateReview(Long userId, Long reviewId, ReviewUpdateRequestDto requestDto) {
+    Review review = reviewRepository.findById(reviewId)
+        .orElseThrow(() -> new IllegalArgumentException("Review not fount with ID:" + reviewId));
+
+    Review.ownerValidate(review, userId);
+
+    review.setReview(requestDto);
+
+    reviewRepository.save(review);
+
+    return ReviewDto.convertDto(review);
   }
 }
