@@ -35,7 +35,7 @@ public class CommentController {
   }
 
 
-  @DeleteMapping("{commentId}")
+  @DeleteMapping("/{commentId}")
   public ResponseEntity<ApiResponse<String>> deleteComment(@PathVariable Long commentId,
       @PathVariable Long reviewId,
       @RequestAttribute Long userId) {
@@ -52,6 +52,6 @@ public class CommentController {
     CommentDto comment = commentService.updateComment(userId,reviewId,commentId,requestDto);
     ApiResponse<CommentDto> apiResponse = ApiResponse.success(HttpStatus.OK, "코멘트 수정 성공",
         comment);
-    return new ResponseEntity<>(apiResponse,HttpStatus.CREATED);
+    return new ResponseEntity<>(apiResponse,HttpStatus.OK);
   }
 }
