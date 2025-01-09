@@ -16,9 +16,9 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
   Optional<Purchase> findByPurchaseIdAndPurchaseUser_UserId(Long purchaseId, Long userId);
 
   // OWNER용
-  Optional<List<Purchase>> findByShop_UserId_UserId(Long ownerId);
-  Optional<List<Purchase>> findByShop_UserId_UserIdAndPurchaseStatus(Long ownerId, PurchaseStatus status);
-  Optional<Purchase> findByPurchaseIdAndShop_UserId_UserId(Long purchaseId, Long ownerId);
+  Optional<List<Purchase>> findByShop_OwnerUser_UserId(Long ownerId);
+  Optional<List<Purchase>> findByShop_OwnerUser_UserIdAndPurchaseStatus(Long ownerId, PurchaseStatus status);
+  Optional<Purchase> findByPurchaseIdAndShop_OwnerUser_UserId(Long purchaseId, Long ownerId);
 
   // 상태로 주문 조회
   List<Purchase> findByPurchaseStatus(PurchaseStatus status);

@@ -91,7 +91,7 @@ public class PurchaseService {
   public List<PurchaseDto> getPurchaseListForOwner(Long ownerId, String purchaseStatus) {
 
     PurchaseStatus status = PurchaseStatus.valueOf(purchaseStatus);
-    List<Purchase> purchaseList = purchaseRepository.findByShop_UserId_UserIdAndPurchaseStatus(ownerId, status)
+    List<Purchase> purchaseList = purchaseRepository.findByShop_OwnerUser_UserIdAndPurchaseStatus(ownerId, status)
           .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
 
     return purchaseList.stream()
@@ -102,7 +102,7 @@ public class PurchaseService {
   @Transactional(readOnly = true)
   public PurchaseDto getPurchaseForOwner(Long ownerId, Long purchaseId) {
 
-    Purchase purchase = purchaseRepository.findByPurchaseIdAndShop_UserId_UserId(purchaseId, ownerId)
+    Purchase purchase = purchaseRepository.findByPurchaseIdAndShop_OwnerUser_UserId(purchaseId, ownerId)
         .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
 
     return PurchaseDto.convertToDto(purchase);
