@@ -64,11 +64,10 @@ public class Purchase extends BaseTime {
 
   // 주문 상태 변경 메서드
   public void changeStatus(PurchaseStatus newStatus) {
-    if (this.purchaseStatus.canTransitionTo(newStatus)) {
-      this.purchaseStatus = newStatus;
-    } else {
+    if (!this.purchaseStatus.canTransitionTo(newStatus)) {
       throw new IllegalStateException("주문 상태를 해당 상태로 전환할 수 없습니다.");
     }
+    this.purchaseStatus = newStatus;
   }
 
   public boolean isOwnedByThisUserId(Long userId) {

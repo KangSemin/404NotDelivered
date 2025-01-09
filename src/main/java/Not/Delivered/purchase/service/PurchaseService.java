@@ -49,7 +49,7 @@ public class PurchaseService {
         .purchaseStatus(PurchaseStatus.PENDING)
         .build();
 
-    return convertToDto(purchaseRepository.save(purchase));
+    return PurchaseDto.convertToDto(purchaseRepository.save(purchase));
   }
 
   // 주문 취소 - NORMAL_USER
@@ -74,7 +74,7 @@ public class PurchaseService {
     List<Purchase> purchaseList = purchaseRepository.findByPurchaseUser_UserIdAndPurchaseStatus(userId, status);
 
     return purchaseList.stream()
-        .map(this::convertToDto)
+        .map(PurchaseDto::convertToDto)
         .collect(Collectors.toList());
   }
 
@@ -83,7 +83,7 @@ public class PurchaseService {
   public PurchaseDto getPurchaseForUser(Long userId, Long purchaseId) {
     Purchase purchase = purchaseRepository.findByPurchaseIdAndPurchaseUser_UserId(purchaseId, userId)
         .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
-    return convertToDto(purchase);
+    return PurchaseDto.convertToDto(purchase);
   }
 
   // OWNER용 메서드
@@ -95,7 +95,7 @@ public class PurchaseService {
           .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
 
     return purchaseList.stream()
-        .map(this::convertToDto)
+        .map(PurchaseDto::convertToDto)
         .collect(Collectors.toList());
   }
 
@@ -105,7 +105,7 @@ public class PurchaseService {
     Purchase purchase = purchaseRepository.findByPurchaseIdAndShop_UserId_UserId(purchaseId, ownerId)
         .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
 
-    return convertToDto(purchase);
+    return PurchaseDto.convertToDto(purchase);
   }
 
   @Transactional
@@ -120,7 +120,7 @@ public class PurchaseService {
     }
 
     purchase.changeStatus(newStatus);
-    return convertToDto(purchaseRepository.save(purchase));
+    return PurchaseDto.convertToDto(purchaseRepository.save(purchase));
   }
 
   // RIDER용 메서드
@@ -131,14 +131,14 @@ public class PurchaseService {
     List<Purchase> purchaseList = purchaseRepository.findByPurchaseStatus(status);
 
     return purchaseList.stream()
-        .map(this::convertToDto)
+        .map(PurchaseDto::convertToDto)
         .collect(Collectors.toList());
   }
 
   public PurchaseDto getPurchaseForRider(Long riderId, Long purchaseId) {
     Purchase purchase = purchaseRepository.findById(purchaseId)
         .orElseThrow(() -> new EntityNotFoundException("주문을 찾을 수 없습니다."));
-    return convertToDto(purchase);
+    return PurchaseDto.convertToDto(purchase);
   }
 
   @Transactional
@@ -161,18 +161,8 @@ public class PurchaseService {
 
     // 상태 변경
     purchase.changeStatus(newStatus);
-    return convertToDto(purchaseRepository.save(purchase));
+    return PurchaseDto.convertToDto(purchaseRepository.save(purchase));
   }
 
-  private PurchaseDto convertToDto(Purchase purchase) {
-    PurchaseDto dto = new PurchaseDto();
-    dto.setPurchaseId(purchase.getPurchaseId());
-    dto.setPurchaseUserId(purchase.getPurchaseUser().getUserId());
-    dto.setDeliveringUserId(purchase.getDeliveringUser() != null ? purchase.getDeliveringUser().getUserId() : null);
-    dto.setShopId(purchase.getShop().getShopId());
-    dto.setMenuId(purchase.getMenu().getMenuId());
-    dto.setPurchaseStatus(purchase.getPurchaseStatus());
-    dto.setCancelled(purchase.isCancelled());
-    return dto;
-  }
+
 }
