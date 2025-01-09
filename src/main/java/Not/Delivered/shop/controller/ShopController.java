@@ -36,12 +36,12 @@ public class ShopController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @PatchMapping("/{shopsId}")
+  @PatchMapping("/{shopId}")
   public ResponseEntity<ApiResponse<ShopUpdateResponseDto>> updateShop(
       @RequestAttribute Long userId,
-      @PathVariable Long shopsId,
+      @PathVariable Long shopId,
       @Valid @RequestBody ShopUpdateRequestDto dto) {
-    ShopUpdateResponseDto shopUpdateResponseDto = shopService.updateShop(userId, shopsId, dto);
+    ShopUpdateResponseDto shopUpdateResponseDto = shopService.updateShop(userId, shopId, dto);
 
     ApiResponse<ShopUpdateResponseDto> response =
         ApiResponse.success(HttpStatus.OK, null, shopUpdateResponseDto);
