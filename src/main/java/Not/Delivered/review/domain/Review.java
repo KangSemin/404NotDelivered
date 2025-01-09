@@ -4,6 +4,7 @@ import Not.Delivered.common.entity.BaseTime;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.review.OwnerDataException;
+import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.user.domain.User;
 import jakarta.persistence.Column;
@@ -19,7 +20,6 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -32,11 +32,9 @@ public class Review extends BaseTime {
   @Column(name = "review_id", nullable = false)
   private Long reviewId;
 
-  @Setter
   @Column(name = "star_point", nullable = false)
   private Long starPoint;
 
-  @Setter
   @Column(name = "review_content", nullable = false)
   private String reviewContent;
 
@@ -74,15 +72,21 @@ public class Review extends BaseTime {
     if (!purchase.getPurchaseUser().getUserId().equals(userId)) {
       throw new OwnerDataException("해당 주문의 유저만 리뷰를 작성할 수 있습니다.");
     }
-
-    if (!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
-      throw new IllegalArgumentException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
-    }
   }
 
   public static void ownerValidate(Review review, Long userId) {
     if (!review.getUser().getUserId().equals(userId)) {
       throw new OwnerDataException("본인의 리뷰만 삭제할 수 있습니다.");
+    }
+  }
+
+  public void setReview(ReviewUpdateRequestDto requestDto) {
+    if (requestDto.reviewContent() != null) {
+      this.reviewContent = requestDto.reviewContent();
+    }
+
+    if (requestDto.starPoint() != null) {
+      this.starPoint = requestDto.starPoint();
     }
   }
 }

@@ -65,13 +65,7 @@ public class ReviewService {
 
     Review.ownerValidate(review, userId);
 
-    if (requestDto.reviewContent() != null) {
-      review.setReviewContent(requestDto.reviewContent());
-    }
-
-    if (requestDto.starPoint() != null) {
-      review.setStarPoint(requestDto.starPoint());
-    }
+    review.setReview(requestDto);
 
     reviewRepository.save(review);
 
