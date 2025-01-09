@@ -3,13 +3,10 @@ package Not.Delivered.purchase.controller;
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
-import Not.Delivered.purchase.service.AccessDeniedException;
 import Not.Delivered.purchase.service.PurchaseService;
 import Not.Delivered.user.domain.UserStatus;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,16 +57,13 @@ public class PurchaseOwnerController {
           .body(ApiResponse.error(HttpStatus.FORBIDDEN, "가게 사장님만 주문을 조회할 수 있습니다."));
     }
 
-    Optional<Purchase> purchaseOptional = purchaseService.getPurchaseForOwner(userId, purchaseId);
-
-    if (purchaseOptional.isPresent()) {
-      return ResponseEntity.ok(
-          ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchaseOptional.get())
-      );
-    } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(ApiResponse.error(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."));
-    }
+    return purchaseService.getPurchaseForOwner(userId, purchaseId)
+        .map(purchase -> ResponseEntity.ok(
+            ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
+        ))
+        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiResponse.error(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."))
+        );
   }
 
   // 주문 상태 변경 - OWNER (예: PENDING <-> COOKING <-> COOKED)
@@ -94,17 +88,10 @@ public class PurchaseOwnerController {
           .body(ApiResponse.error(HttpStatus.BAD_REQUEST, "유효한 주문 상태를 입력해주세요."));
     }
 
-    try {
-      Purchase updatedPurchase = purchaseService.updatePurchaseStatusByOwner(userId, purchaseId, newStatus);
-      return ResponseEntity.ok(
-          ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchase)
-      );
-    } catch (IllegalStateException | AccessDeniedException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(ApiResponse.error(HttpStatus.BAD_REQUEST, e.getMessage()));
-    } catch (EntityNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage()));
-    }
+    Purchase updatedPurchase = purchaseService.updatePurchaseStatusByOwner(userId, purchaseId, newStatus);
+
+    return ResponseEntity.ok(
+        ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchase)
+    );
   }
 }
