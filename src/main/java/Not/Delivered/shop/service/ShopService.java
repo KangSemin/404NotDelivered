@@ -133,6 +133,7 @@ public class ShopService {
     foundShop.closedShop();
   }
 
+  // TODO userRole까지 확인할 수 있도록 수정 필요
   public Shop foundAndValidate(Long userId, Long shopId) {
     Shop foundShop =
         shopRepository
