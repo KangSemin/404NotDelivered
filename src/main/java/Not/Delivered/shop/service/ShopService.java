@@ -93,7 +93,7 @@ public class ShopService {
             .findById(shopId)
             .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
 
-    List<Menu> foundMenuList = menuRepository.findAllByShop_ShopId(foundShop.getShopId());
+    List<Menu> foundMenuList = menuRepository.findAllByShopId(foundShop.getShopId());
 
     return ShopReadResponseDto.builder()
         .shopName(foundShop.getShopName())
@@ -103,7 +103,7 @@ public class ShopService {
         .openTime(foundShop.getOpenTime())
         .closeTime(foundShop.getCloseTime())
         .minOrderPrice(foundShop.getMinOrderPrice())
-        .menuList(MenuReadResponseDto.getSellingMenuList(foundMenuList))
+        .menuList(MenuReadResponseDto.toDtoList(foundMenuList))
         .build();
   }
 }

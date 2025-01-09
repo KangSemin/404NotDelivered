@@ -18,9 +18,8 @@ public class MenuReadResponseDto {
     this.price = price;
   }
 
-  public static List<MenuReadResponseDto> getSellingMenuList(List<Menu> menuList) {
+  public static List<MenuReadResponseDto> toDtoList(List<Menu> menuList) {
     return menuList.stream()
-        .filter(menu -> !menu.isDeleted())
         .map(
             menu ->
                 MenuReadResponseDto.builder()

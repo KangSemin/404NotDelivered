@@ -38,7 +38,7 @@ public class ShopController {
   }
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<ShopReadResponseDto>>> findAllShop(
+  public ResponseEntity<ApiResponse<List<ShopReadResponseDto>>> getAllShop(
       @RequestParam(required = false) String shopName) {
     List<ShopReadResponseDto> shopReadResponseDtoList = shopService.findAllShop(shopName);
 
@@ -49,7 +49,8 @@ public class ShopController {
   }
 
   @GetMapping("/{shopId}")
-  public ResponseEntity<ApiResponse<ShopReadResponseDto>> findByShopId(@PathVariable Long shopId) {
+  public ResponseEntity<ApiResponse<ShopReadResponseDto>> getShopByShopId(
+      @PathVariable Long shopId) {
     ShopReadResponseDto shopReadResponseDto = shopService.findByShopId(shopId);
 
     ApiResponse<ShopReadResponseDto> response =
