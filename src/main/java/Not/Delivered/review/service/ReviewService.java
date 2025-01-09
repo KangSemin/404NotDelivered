@@ -80,7 +80,7 @@ public class ReviewService {
 
   public List<ReviewListDto> getShopReview(Long shopId) {
 
-    List<Review> reviewList = reviewRepository.findAllByShopShopIdOrderByCreatedAt(shopId);
+    List<Review> reviewList = reviewRepository.findAllByShopShopIdOrderByCreatedAtDesc(shopId);
 
     return reviewList.stream().map(
         review -> ReviewListDto.builder()
