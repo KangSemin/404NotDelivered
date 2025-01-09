@@ -40,7 +40,6 @@ public class ShopController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-
   @GetMapping
   public ResponseEntity<ApiResponse<List<ShopReadResponseDto>>> getAllShop(
       @RequestParam(required = false) String shopName) {
@@ -60,6 +59,9 @@ public class ShopController {
     ApiResponse<ShopReadResponseDto> response =
         ApiResponse.success(HttpStatus.OK, null, shopReadResponseDto);
 
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @PatchMapping("/{shopId}")
   public ResponseEntity<ApiResponse<ShopUpdateResponseDto>> updateShop(
       @RequestAttribute Long userId,
@@ -69,7 +71,6 @@ public class ShopController {
 
     ApiResponse<ShopUpdateResponseDto> response =
         ApiResponse.success(HttpStatus.OK, null, shopUpdateResponseDto);
-
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

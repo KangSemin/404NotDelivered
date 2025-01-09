@@ -67,7 +67,6 @@ public class ShopService {
         .build();
   }
 
-
   public List<ShopReadResponseDto> findAllShop(String shopName) {
     List<Shop> foundShopList = shopRepository.findByShopName(shopName);
 
@@ -100,7 +99,16 @@ public class ShopService {
     List<Menu> foundMenuList = menuRepository.findAllByShopId(foundShop.getShopId());
 
     return ShopReadResponseDto.builder()
-   }
+        .shopName(foundShop.getShopName())
+        .introduce(foundShop.getIntroduce())
+        .address(foundShop.getAddress())
+        .phoneNumber(foundShop.getPhoneNumber())
+        .openTime(foundShop.getOpenTime())
+        .closeTime(foundShop.getCloseTime())
+        .minOrderPrice(foundShop.getMinOrderPrice())
+        .menuList(MenuReadResponseDto.toDtoList(foundMenuList))
+        .build();
+  }
 
   @Transactional
   public ShopUpdateResponseDto updateShop(Long userId, Long shopsId, ShopUpdateRequestDto dto) {
@@ -120,7 +128,6 @@ public class ShopService {
         .openTime(foundShop.getOpenTime())
         .closeTime(foundShop.getCloseTime())
         .minOrderPrice(foundShop.getMinOrderPrice())
-        .menuList(MenuReadResponseDto.toDtoList(foundMenuList))
         .isClosing(foundShop.isClosing())
         .build();
   }
