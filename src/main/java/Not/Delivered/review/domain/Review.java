@@ -74,10 +74,6 @@ public class Review extends BaseTime {
     if (!purchase.getPurchaseUser().getUserId().equals(userId)) {
       throw new OwnerDataException("해당 주문의 유저만 리뷰를 작성할 수 있습니다.");
     }
-
-    if (!purchase.getPurchaseStatus().equals(PurchaseStatus.DELIVERED)) {
-      throw new IllegalArgumentException("배달 완료되지 않은 주문은 리뷰를 남길 수 없습니다.");
-    }
   }
 
   public static void ownerValidate(Review review, Long userId) {
