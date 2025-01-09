@@ -17,7 +17,6 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -32,7 +31,6 @@ public class Comment extends BaseTime {
   @Column(name = "comment_id")
   private Long commentId;
 
-  @Setter
   @Column(name = "comment_content", nullable = false)
   private String commentContent;
 
@@ -63,8 +61,12 @@ public class Comment extends BaseTime {
   }
 
   public static void shopOwnerValidate(Shop shop, Long userId) {
-    if (shop.getOwnerUser().getUserId().equals(userId)) {
+    if (!shop.getOwnerUser().getUserId().equals(userId)) {
       throw new OwnerDataException("Only store owner can fill it out.");
     }
+  }
+
+  public void setCommentContent(String commentContent) {
+    this.commentContent=commentContent;
   }
 }
