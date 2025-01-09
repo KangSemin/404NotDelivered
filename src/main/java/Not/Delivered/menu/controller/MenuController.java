@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,13 +42,26 @@ public class MenuController {
   @PatchMapping("/{menuId}")
   public ResponseEntity<ApiResponse<MenuUpdateResponseDto>> updateMenu(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userRole,
+      @RequestAttribute UserStatus userStatus,
       @PathVariable Long menuId,
       @Valid @RequestBody MenuUpdateRequestDto dto) {
     MenuUpdateResponseDto menuUpdateResponseDto =
-        menuService.updateMenu(userId, userRole, menuId, dto);
+        menuService.updateMenu(userId, userStatus, menuId, dto);
     ApiResponse<MenuUpdateResponseDto> response =
         ApiResponse.success(HttpStatus.OK, null, menuUpdateResponseDto);
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{shopId}/{menuId}")
+  public ResponseEntity<ApiResponse<Void>> deleteMenu(
+      @RequestAttribute Long userId,
+      @RequestAttribute UserStatus userStatus,
+      @PathVariable Long shopId,
+      @PathVariable Long menuId) {
+    menuService.deleteMenu(userId, userStatus, shopId, menuId);
+
+    ApiResponse<Void> response = ApiResponse.success(HttpStatus.OK, "해당 메뉴의 판매가 중지되었습니다.", null);
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

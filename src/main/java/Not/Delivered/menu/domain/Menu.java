@@ -49,4 +49,8 @@ public class Menu {
       this.price = dto.getPrice();
     }
   }
+
+  public void deletedMenu() {
+    this.isDeleted = true;
+  }
 }
