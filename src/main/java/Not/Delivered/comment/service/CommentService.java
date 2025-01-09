@@ -3,6 +3,7 @@ package Not.Delivered.comment.service;
 import Not.Delivered.comment.domain.Comment;
 import Not.Delivered.comment.domain.Dto.CommentCreateRequestDto;
 import Not.Delivered.comment.domain.Dto.CommentDto;
+import Not.Delivered.comment.domain.Dto.CommentUpdateRequestDto;
 import Not.Delivered.comment.repository.CommentRepository;
 import Not.Delivered.review.OnlyOneDateException;
 import Not.Delivered.review.domain.Review;
@@ -53,5 +54,15 @@ public class CommentService {
         .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
     Comment.commentReviewAndUserValidate(comment, reviewId, userId);
     commentRepository.delete(comment);
+  }
+
+  public CommentDto updateComment(Long userId, Long reviewId, Long commentId,
+      CommentUpdateRequestDto requestDto) {
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
+    Comment.commentReviewAndUserValidate(comment, reviewId, userId);
+    comment.setCommentContent(requestDto.commentContent());
+    commentRepository.save(comment);
+    return CommentDto.convertDto(comment);
   }
 }
