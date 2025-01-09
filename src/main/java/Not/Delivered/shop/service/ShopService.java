@@ -133,7 +133,7 @@ public class ShopService {
     foundShop.closedShop();
   }
 
-  private Shop foundAndValidate(Long userId, Long shopId) {
+  public Shop foundAndValidate(Long userId, Long shopId) {
     Shop foundShop =
         shopRepository
             .findById(shopId)
