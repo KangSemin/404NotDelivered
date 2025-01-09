@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,15 @@ public class ShopController {
     ApiResponse<ShopUpdateResponseDto> response =
         ApiResponse.success(HttpStatus.OK, null, shopUpdateResponseDto);
 
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{shopId}")
+  public ResponseEntity<ApiResponse<Void>> deleteShop(
+      @RequestAttribute Long userId, @PathVariable Long shopId) {
+    shopService.deleteShop(userId, shopId);
+
+    ApiResponse<Void> response = ApiResponse.success(HttpStatus.OK, "가게 운영이 종료되었습니다.", null);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }
