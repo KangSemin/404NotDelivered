@@ -1,6 +1,7 @@
 package Not.Delivered.shop.domain;
 
 import Not.Delivered.common.entity.Address;
+import Not.Delivered.shop.dto.ShopUpdateRequestDto;
 import Not.Delivered.user.domain.User;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalTime;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,11 +44,11 @@ public class Shop {
 
   @Embedded
   @AttributeOverrides({
-      @AttributeOverride(name = "city", column = @Column(name = "city", nullable = false)),
-      @AttributeOverride(name = "state", column = @Column(name = "state", nullable = false)),
-      @AttributeOverride(name = "street", column = @Column(name = "street", nullable = false)),
-      @AttributeOverride(name = "detailAddress1", column = @Column(name = "detail_address1")),
-      @AttributeOverride(name = "detailAddress2", column = @Column(name = "detail_address2"))
+    @AttributeOverride(name = "city", column = @Column(name = "city", nullable = false)),
+    @AttributeOverride(name = "state", column = @Column(name = "state", nullable = false)),
+    @AttributeOverride(name = "street", column = @Column(name = "street", nullable = false)),
+    @AttributeOverride(name = "detailAddress1", column = @Column(name = "detail_address1")),
+    @AttributeOverride(name = "detailAddress2", column = @Column(name = "detail_address2"))
   })
   private Address address;
 
@@ -67,9 +69,16 @@ public class Shop {
   private boolean isClosing;
 
   @Builder
-  public Shop(User ownerUser, String shopName, String introduce, Address address,
+  public Shop(
+      User ownerUser,
+      String shopName,
+      String introduce,
+      Address address,
       String phoneNumber,
-      LocalTime openTime, LocalTime closeTime, Long minOrderPrice, boolean isClosing) {
+      LocalTime openTime,
+      LocalTime closeTime,
+      Long minOrderPrice,
+      boolean isClosing) {
     this.ownerUser = ownerUser;
     this.shopName = shopName;
     this.introduce = introduce;
@@ -79,5 +88,21 @@ public class Shop {
     this.closeTime = closeTime;
     this.minOrderPrice = minOrderPrice;
     this.isClosing = isClosing;
+  }
+
+  public void validShopOwner(Long userId, Long ownerUserId) {
+    if (!Objects.equals(userId, ownerUserId)) {
+      throw new IllegalArgumentException("해당 가게에 대한 권한이 없습니다.");
+    }
+  }
+
+  public void updateShopInfo(ShopUpdateRequestDto dto) {
+    this.shopName = dto.getShopName();
+    this.introduce = dto.getIntroduce();
+    this.address = dto.getAddress();
+    this.phoneNumber = dto.getPhoneNumber();
+    this.openTime = dto.getOpenTime();
+    this.closeTime = dto.getCloseTime();
+    this.minOrderPrice = dto.getMinOrderPrice();
   }
 }

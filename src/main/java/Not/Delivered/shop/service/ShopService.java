@@ -3,12 +3,15 @@ package Not.Delivered.shop.service;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.dto.ShopCreateRequestDto;
 import Not.Delivered.shop.dto.ShopCreateResponseDto;
+import Not.Delivered.shop.dto.ShopUpdateRequestDto;
+import Not.Delivered.shop.dto.ShopUpdateResponseDto;
 import Not.Delivered.shop.repository.ShopRepository;
 import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -54,6 +57,28 @@ public class ShopService {
         .closeTime(savedShop.getCloseTime())
         .minOrderPrice(savedShop.getMinOrderPrice())
         .isClosing(savedShop.isClosing())
+        .build();
+  }
+
+  @Transactional
+  public ShopUpdateResponseDto updateShop(Long userId, Long shopsId, ShopUpdateRequestDto dto) {
+    Shop foundShop =
+        shopRepository
+            .findById(shopsId)
+            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+
+    foundShop.validShopOwner(userId, foundShop.getOwnerUser().getUserId());
+    foundShop.updateShopInfo(dto);
+
+    return ShopUpdateResponseDto.builder()
+        .shopName(foundShop.getShopName())
+        .introduce(foundShop.getIntroduce())
+        .address(foundShop.getAddress())
+        .phoneNumber(foundShop.getPhoneNumber())
+        .openTime(foundShop.getOpenTime())
+        .closeTime(foundShop.getCloseTime())
+        .minOrderPrice(foundShop.getMinOrderPrice())
+        .isClosing(foundShop.isClosing())
         .build();
   }
 }
