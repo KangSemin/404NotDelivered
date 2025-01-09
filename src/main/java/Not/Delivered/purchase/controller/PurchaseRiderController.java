@@ -4,8 +4,11 @@ package Not.Delivered.purchase.controller;
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
+import Not.Delivered.purchase.dto.PurchaseDto;
+import Not.Delivered.purchase.dto.PurchaseStatusUpdateDto;
 import Not.Delivered.purchase.service.PurchaseService;
 import Not.Delivered.user.domain.UserStatus;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -29,17 +32,14 @@ public class PurchaseRiderController {
 
   // 주문 목록 조회 - RIDER 배달 가능한 주문 조회
   @GetMapping
-  public ResponseEntity<ApiResponse<List<Purchase>>> getRiderPurchases(
+  public ResponseEntity<ApiResponse<List<PurchaseDto>>> getRiderPurchaseList(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
       @RequestParam(required = false) String purchaseStatus) {
 
-    if (userStatus != UserStatus.RIDER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "라이더만 주문 목록을 조회할 수 있습니다."));
-    }
+// 유저검증로직: 라이더
 
-    List<Purchase> purchases = purchaseService.getPurchasesForRider(userId, purchaseStatus);
+    List<PurchaseDto> purchases = purchaseService.getPurchaseListForRider(userId, purchaseStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchases)
@@ -48,48 +48,33 @@ public class PurchaseRiderController {
 
   // 주문 상세 조회 - RIDER
   @GetMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<Purchase>> getRiderPurchase(
+  public ResponseEntity<ApiResponse<PurchaseDto>> getRiderPurchase(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-    if (userStatus != UserStatus.RIDER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "라이더만 주문을 조회할 수 있습니다."));
-    }
+// 유저검증로직: 라이더
 
-    return purchaseService.getPurchaseForRider(userId, purchaseId)
-        .map(purchase -> ResponseEntity.ok(
-            ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
-        ))
-        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ApiResponse.error(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."))
-        );
+    PurchaseDto purchase = purchaseService.getPurchaseForRider(userId, purchaseId);
+
+    return ResponseEntity.ok(
+        ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
+    );
   }
 
   // 주문 상태 변경 - RIDER (예: COOKED <-> DELIVERING <-> DELIVERED)
   @PatchMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<Purchase>> updateRiderPurchaseStatus(
+  public ResponseEntity<ApiResponse<PurchaseDto>> updateRiderPurchaseStatus(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId,
-      @RequestBody Map<String, String> requestBody) {
+      @Valid @RequestBody PurchaseStatusUpdateDto request) {
 
-    if (userStatus != UserStatus.RIDER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "라이더만 주문 상태를 변경할 수 있습니다."));
-    }
+// 유저검증로직: 라이더
 
-    String newStatusStr = requestBody.get("purchaseStatus");
-    PurchaseStatus newStatus;
-    try {
-      newStatus = PurchaseStatus.valueOf(newStatusStr);
-    } catch (IllegalArgumentException | NullPointerException e) {
-      return ResponseEntity.badRequest()
-          .body(ApiResponse.error(HttpStatus.BAD_REQUEST, "유효한 주문 상태를 입력해주세요."));
-    }
+    PurchaseStatus newStatus = request.getPurchaseStatus();
 
-    Purchase updatedPurchase = purchaseService.updatePurchaseStatusByRider(userId, purchaseId, newStatus);
+    PurchaseDto updatedPurchase = purchaseService.updatePurchaseStatusByRider(userId, purchaseId, newStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchase)

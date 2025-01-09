@@ -3,8 +3,11 @@ package Not.Delivered.purchase.controller;
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
+import Not.Delivered.purchase.dto.PurchaseDto;
+import Not.Delivered.purchase.dto.PurchaseStatusUpdateDto;
 import Not.Delivered.purchase.service.PurchaseService;
 import Not.Delivered.user.domain.UserStatus;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -28,70 +31,51 @@ public class PurchaseOwnerController {
 
   // 주문 목록 조회 - OWNER 자신의 가게에 대한 주문 조회
   @GetMapping
-  public ResponseEntity<ApiResponse<List<Purchase>>> getOwnerPurchases(
+  public ResponseEntity<ApiResponse<List<PurchaseDto>>> getOwnerPurchaseList(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @RequestParam(required = false) String purchaseStatus) {
 
-    if (userStatus != UserStatus.OWNER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "가게 사장님만 주문 목록을 조회할 수 있습니다."));
-    }
+//    유저검증로직: 가게 주인
 
-    List<Purchase> purchases = purchaseService.getPurchasesForOwner(userId, purchaseStatus);
+    List<PurchaseDto> purchasesDto = purchaseService.getPurchaseListForOwner(userId,
+        purchaseStatus);
 
     return ResponseEntity.ok(
-        ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchases)
+        ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchasesDto)
     );
   }
 
   // 주문 상세 조회 - OWNER 자신의 가게에 대한 주문 조회
   @GetMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<Purchase>> getOwnerPurchase(
+  public ResponseEntity<ApiResponse<PurchaseDto>> getOwnerPurchase(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-    if (userStatus != UserStatus.OWNER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "가게 사장님만 주문을 조회할 수 있습니다."));
-    }
+//    유저검증로직: 가게 주인
 
-    return purchaseService.getPurchaseForOwner(userId, purchaseId)
-        .map(purchase -> ResponseEntity.ok(
-            ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
-        ))
-        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ApiResponse.error(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."))
-        );
+    PurchaseDto purchase = purchaseService.getPurchaseForOwner(userId, purchaseId);
+
+    return ResponseEntity.ok(
+        ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
+    );
   }
 
   // 주문 상태 변경 - OWNER (예: PENDING <-> COOKING <-> COOKED)
   @PatchMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<Purchase>> updateOwnerPurchaseStatus(
+  public ResponseEntity<ApiResponse<PurchaseDto>> updateOwnerPurchaseStatus(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId,
-      @RequestBody Map<String, String> requestBody) {
+      @Valid @RequestBody PurchaseStatusUpdateDto request) {
 
-    if (userStatus != UserStatus.OWNER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "가게 사장님만 주문 상태를 변경할 수 있습니다."));
-    }
+// 유저검증로직: 가게 주인
 
-    String newStatusStr = requestBody.get("purchaseStatus");
-    PurchaseStatus newStatus;
-    try {
-      newStatus = PurchaseStatus.valueOf(newStatusStr);
-    } catch (IllegalArgumentException | NullPointerException e) {
-      return ResponseEntity.badRequest()
-          .body(ApiResponse.error(HttpStatus.BAD_REQUEST, "유효한 주문 상태를 입력해주세요."));
-    }
+    PurchaseStatus newStatus = request.getPurchaseStatus();
 
-    Purchase updatedPurchase = purchaseService.updatePurchaseStatusByOwner(userId, purchaseId, newStatus);
+    PurchaseDto updatedPurchaseDto = purchaseService.updatePurchaseStatusByOwner(userId, purchaseId,
+        newStatus);
 
     return ResponseEntity.ok(
-        ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchase)
+        ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchaseDto)
     );
   }
 }

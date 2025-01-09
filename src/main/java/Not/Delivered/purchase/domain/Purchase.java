@@ -39,6 +39,7 @@ public class Purchase extends BaseTime {
 
   // 배달하는 사용자
   @ManyToOne
+  @Setter
   @JoinColumn(name = "delivery_user_id")
   private User deliveringUser;
 
@@ -66,8 +67,15 @@ public class Purchase extends BaseTime {
     if (this.purchaseStatus.canTransitionTo(newStatus)) {
       this.purchaseStatus = newStatus;
     } else {
-      throw new IllegalStateException("현재 상태에서 해당 상태로 전환할 수 없습니다.");
+      throw new IllegalStateException("주문 상태를 해당 상태로 전환할 수 없습니다.");
     }
+  }
+
+  public boolean isOwnedByThisUserId(Long userId) {
+    if (this.purchaseUser.getUserId().equals(userId)) {
+      return true;
+    }
+    return false;
   }
 
   // 주문 취소 메서드
@@ -78,10 +86,6 @@ public class Purchase extends BaseTime {
     this.isCancelled = true;
   }
 
-  // 배송자 설정 메서드
-  public void setDeliveringUser(User deliveringUser) {
-    this.deliveringUser = deliveringUser;
-  }
 
   // 주문 생성 메서드
   @Builder

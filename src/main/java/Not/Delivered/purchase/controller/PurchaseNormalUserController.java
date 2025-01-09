@@ -3,6 +3,7 @@ package Not.Delivered.purchase.controller;
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.dto.PurchaseCreateDto;
+import Not.Delivered.purchase.dto.PurchaseDto;
 import Not.Delivered.purchase.service.PurchaseService;
 import Not.Delivered.user.domain.UserStatus;
 import jakarta.validation.Valid;
@@ -29,33 +30,25 @@ public class PurchaseNormalUserController {
 
   // 주문 생성 - NORMAL_USER
   @PostMapping
-  public ResponseEntity<ApiResponse<Purchase>> createPurchase(
+  public ResponseEntity<ApiResponse<PurchaseDto>> createPurchase(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @Valid @RequestBody PurchaseCreateDto purchaseCreateDto) {
 
-    if (userStatus != UserStatus.NORMAL_USER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "일반 사용자만 주문을 생성할 수 있습니다."));
-    }
+//    유저검증로직: 일반 사용자
 
-    Purchase newPurchase = purchaseService.createPurchase(userId, purchaseCreateDto);
+    PurchaseDto newPurchaseDto = purchaseService.createPurchase(userId, purchaseCreateDto);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(ApiResponse.success(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다.", newPurchase));
+        .body(ApiResponse.success(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다.", newPurchaseDto));
   }
 
   // 주문 취소 - NORMAL_USER (PENDING 상태에서만)
   @DeleteMapping("/{purchaseId}")
   public ResponseEntity<ApiResponse<Void>> cancelPurchase(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-    if (userStatus != UserStatus.NORMAL_USER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "일반 사용자만 주문을 취소할 수 있습니다."));
-    }
+//    유저검증로직: 일반 사용자
 
     purchaseService.cancelPurchase(userId, purchaseId);
 
@@ -66,17 +59,13 @@ public class PurchaseNormalUserController {
 
   // 주문 목록 조회 - NORMAL_USER 본인의 주문만 조회
   @GetMapping
-  public ResponseEntity<ApiResponse<List<Purchase>>> getUserPurchases(
+  public ResponseEntity<ApiResponse<List<PurchaseDto>>> getUserPurchases(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @RequestParam(required = false) String purchaseStatus) {
 
-    if (userStatus != UserStatus.NORMAL_USER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "일반 사용자만 자신의 주문 목록을 조회할 수 있습니다."));
-    }
+//    유저검증로직: 일반 사용자
 
-    List<Purchase> purchases = purchaseService.getPurchasesForUser(userId, purchaseStatus);
+    List<PurchaseDto> purchases = purchaseService.getPurchasesForUser(userId, purchaseStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchases)
@@ -85,22 +74,16 @@ public class PurchaseNormalUserController {
 
   // 주문 상세 조회 - NORMAL_USER 본인의 주문만 조회
   @GetMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<Purchase>> getUserPurchase(
+  public ResponseEntity<ApiResponse<PurchaseDto>> getUserPurchase(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-    if (userStatus != UserStatus.NORMAL_USER) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(ApiResponse.error(HttpStatus.FORBIDDEN, "일반 사용자만 자신의 주문을 조회할 수 있습니다."));
-    }
+//    유저검증로직: 일반 사용자
 
-    return purchaseService.getPurchaseForUser(userId, purchaseId)
-        .map(purchase -> ResponseEntity.ok(
-            ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
-        ))
-        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ApiResponse.error(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."))
-        );
+    PurchaseDto purchase = purchaseService.getPurchaseForUser(userId, purchaseId);
+
+    return ResponseEntity.ok(
+        ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
+    );
   }
 }
