@@ -12,9 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ShopCreateRequestDto {
 
-  @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-  private final Long userId;
-
   @NotBlank(message = "가게 이름은 필수 입력 값입니다.")
   private final String shopName;
 

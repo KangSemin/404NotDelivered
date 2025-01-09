@@ -15,7 +15,7 @@ public class ReviewDto {
   private Long purchaseId;
   private Long userId;
   private Long shopId;
-  private Long startPoint;
+  private Long starPoint;
   private String reviewContent;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
@@ -26,7 +26,7 @@ public class ReviewDto {
         review.getPurchase().getPurchaseId(),
         review.getUser().getUserId(),
         review.getShop().getShopId(),
-        review.getStartPoint(),
+        review.getStarPoint(),
         review.getReviewContent(),
         review.getCreatedAt(),
         review.getLastModifiedAt()
