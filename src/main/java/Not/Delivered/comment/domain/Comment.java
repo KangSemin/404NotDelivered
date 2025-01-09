@@ -66,7 +66,7 @@ public class Comment extends BaseTime {
     }
   }
 
-  public void setCommentContent(String commentContent) {
+  public void updateCommentContent(String commentContent) {
     this.commentContent=commentContent;
   }
 }
