@@ -2,6 +2,7 @@ package Not.Delivered.common.config;
 
 
 import Not.Delivered.auth.service.LogoutService;
+import Not.Delivered.user.domain.UserStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +54,9 @@ public class JwtFilter extends OncePerRequestFilter {
 				}
 
 				Long userId = jwtConfig.getUserIdFromToken(token);
+				UserStatus userStatus = jwtConfig.getUserStatusFromToken(token);
 				request.setAttribute("userId", userId);
+				request.setAttribute("userStatus", userStatus.name());
 				filterChain.doFilter(request, response);
 			} else {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
