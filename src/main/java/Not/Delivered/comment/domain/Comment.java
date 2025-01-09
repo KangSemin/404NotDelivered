@@ -61,8 +61,12 @@ public class Comment extends BaseTime {
   }
 
   public static void shopOwnerValidate(Shop shop, Long userId) {
-    if (shop.getOwnerUser().getUserId().equals(userId)) {
+    if (!shop.getOwnerUser().getUserId().equals(userId)) {
       throw new OwnerDataException("Only store owner can fill it out.");
     }
+  }
+
+  public void updateCommentContent(String commentContent) {
+    this.commentContent=commentContent;
   }
 }
