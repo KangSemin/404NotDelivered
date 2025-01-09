@@ -81,7 +81,7 @@ public class ReviewService {
   public List<ReviewListDto> getShopReview(Long shopId) {
 
     List<Review> reviewList = reviewRepository.findAllByShopShopIdOrderByCreatedAtDesc(shopId);
-
+//TODO 해당 로직이 리뷰 한건당 쿼리 하나씩 추가로 날려서 고민해보고 로직 변경 예정
     return reviewList.stream().map(
         review -> ReviewListDto.builder()
             .userId(review.getUser().getUserId())
