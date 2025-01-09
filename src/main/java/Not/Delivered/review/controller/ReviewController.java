@@ -38,10 +38,10 @@ public class ReviewController {
 
 
   @DeleteMapping("/{reviewId}")
-  public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId,
+  public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId,
       @RequestAttribute Long userId) {
     reviewService.deleteReview(userId, reviewId);
-    ApiResponse<String> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", null);
+    ApiResponse<Void> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 삭제 성공", null);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
