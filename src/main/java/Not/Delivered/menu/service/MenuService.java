@@ -3,12 +3,15 @@ package Not.Delivered.menu.service;
 import Not.Delivered.menu.domain.Menu;
 import Not.Delivered.menu.dto.MenuCreateRequestDto;
 import Not.Delivered.menu.dto.MenuCreateResponseDto;
+import Not.Delivered.menu.dto.MenuUpdateRequestDto;
+import Not.Delivered.menu.dto.MenuUpdateResponseDto;
 import Not.Delivered.menu.repository.MenuRepository;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.service.ShopService;
 import Not.Delivered.user.domain.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class MenuService {
 
   public MenuCreateResponseDto createMenu(
       Long userId, UserStatus userRole, MenuCreateRequestDto dto) {
+
     if (!userRole.equals(UserStatus.OWNER)) {
       throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
     }
@@ -33,6 +37,28 @@ public class MenuService {
     return MenuCreateResponseDto.builder()
         .menuName(savedMenu.getMenuName())
         .price(savedMenu.getPrice())
+        .build();
+  }
+
+  @Transactional
+  public MenuUpdateResponseDto updateMenu(
+      Long userId, UserStatus userRole, Long menuId, MenuUpdateRequestDto dto) {
+    if (!userRole.equals(UserStatus.OWNER)) {
+      throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
+    }
+
+    shopService.foundAndValidate(userId, dto.getShopId());
+
+    Menu foundMenu =
+        menuRepository
+            .findById(menuId)
+            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+
+    foundMenu.updateMenuInfo(dto);
+
+    return MenuUpdateResponseDto.builder()
+        .menuName(foundMenu.getMenuName())
+        .price(foundMenu.getPrice())
         .build();
   }
 }
