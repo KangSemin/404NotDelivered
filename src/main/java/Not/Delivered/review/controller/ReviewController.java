@@ -6,6 +6,7 @@ import Not.Delivered.review.domain.Dto.ReviewDto;
 import Not.Delivered.review.domain.Dto.ReviewListDto;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.review.service.ReviewService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class ReviewController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<ReviewDto>> createReview(@RequestAttribute Long userId,
-      @RequestBody ReviewCreateRequestDto requestDto) {
+      @RequestBody @Valid ReviewCreateRequestDto requestDto) {
     ReviewDto review = reviewService.createReview(userId, requestDto);
     ApiResponse<ReviewDto> apiResponse = ApiResponse.success(HttpStatus.CREATED, "리뷰 생성 성공",
         review);
@@ -47,7 +48,7 @@ public class ReviewController {
 
   @PatchMapping("{reviewId}")
   public ResponseEntity<ApiResponse<ReviewDto>> updateReview(@PathVariable Long reviewId,
-      @RequestBody ReviewUpdateRequestDto requestDto, @RequestAttribute Long userId) {
+      @RequestBody @Valid ReviewUpdateRequestDto requestDto, @RequestAttribute Long userId) {
     ReviewDto review = reviewService.updateReview(userId, reviewId, requestDto);
     ApiResponse<ReviewDto> apiResponse = ApiResponse.success(HttpStatus.OK, "리뷰 수정 성공", review);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);

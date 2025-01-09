@@ -5,6 +5,7 @@ import Not.Delivered.comment.domain.Dto.CommentDto;
 import Not.Delivered.comment.domain.Dto.CommentUpdateRequestDto;
 import Not.Delivered.comment.service.CommentService;
 import Not.Delivered.common.dto.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class CommentController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<CommentDto>> createComment(@RequestAttribute Long userId,
-      @RequestBody CommentCreateRequestDto requestDto,
+      @RequestBody @Valid CommentCreateRequestDto requestDto,
       @PathVariable Long reviewId) {
     CommentDto comment = commentService.createComment(userId, reviewId, requestDto);
     ApiResponse<CommentDto> apiResponse = ApiResponse.success(HttpStatus.CREATED, "코멘트 생성 성공",
@@ -48,7 +49,7 @@ public class CommentController {
   public ResponseEntity<ApiResponse<CommentDto>> updateComment(@PathVariable Long commentId,
       @RequestAttribute Long userId,
       @PathVariable Long reviewId,
-      @RequestBody CommentUpdateRequestDto requestDto) {
+      @RequestBody @Valid CommentUpdateRequestDto requestDto) {
     CommentDto comment = commentService.updateComment(userId,reviewId,commentId,requestDto);
     ApiResponse<CommentDto> apiResponse = ApiResponse.success(HttpStatus.OK, "코멘트 수정 성공",
         comment);
