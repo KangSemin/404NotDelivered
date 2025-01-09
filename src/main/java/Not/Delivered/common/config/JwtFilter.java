@@ -64,10 +64,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	}
 
 	private boolean isPermitAllPath(String requestURI) {
-
-    //return requestURI.equals("/users/login") ||
-    //  			requestURI.equals("/users/signup");
-		return true;
+    return requestURI.equals("/users/login") ||
+      			requestURI.equals("/users/signup");
 	}
 
 }

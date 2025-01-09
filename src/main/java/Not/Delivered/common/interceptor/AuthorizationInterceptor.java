@@ -1,74 +1,114 @@
 package Not.Delivered.common.interceptor;
 
 import Not.Delivered.user.domain.UserStatus;
-import ch.qos.logback.core.joran.spi.HttpUtil.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
-
   private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-      throws Exception {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-    UserStatus userStatus = UserStatus.valueOf((String) request.getAttribute("userStatus"));
-
-    if (userStatus == null) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 에러
-      response.getWriter().write("Unauthorized: Missing userStatus");
+    String userStatusValue = (String) request.getAttribute("userStatus");
+    if (userStatusValue == null) {
+      setErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing userStatus");
       return false;
     }
 
-    switch (userStatus) {
-      case OWNER:
-        return !isUriPermitOnlyDriver(request, response);
-      case RIDER:
-        return !isUriPermitOnlyOwner(request, response);
-      case NORMAL_USER:
-        return !isUriPermitOnlyDriver(request, response) && !isUriPermitOnlyOwner(request,
-            response);
+    UserStatus userStatus;
+    try {
+      userStatus = UserStatus.valueOf(userStatusValue);
+    } catch (IllegalArgumentException e) {
+      setErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid userStatus");
+      return false;
     }
 
-    // 정상적으로 통과
-    return true;
-  }
-
-  private boolean isUriPermitOnlyOwner(HttpServletRequest request, HttpServletResponse response)
-      throws Exception {
-    String uri = request.getRequestURI();
-    if (pathMatcher.match("/shops", uri) && !request.getMethod().equals("GET") ||
-        pathMatcher.match("/menus", uri) && !request.getMethod().equals("GET") ||
-        pathMatcher.match("/orders/{orderId}", uri) && request.getMethod().equals("DELETE") ||
-        pathMatcher.match("/shops/{shopId}/orders", uri) ||
-        pathMatcher.match("/orders/{orderId}/complete", uri) ||
-        pathMatcher.match("/reviews/{reviewId}/comments", uri)
-    ) {
+    // NORMAL_USER 권한 확인
+    if (isNormalUserApi(request)) {
       return true;
     }
 
-    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 에러
-    response.getWriter().write("Forbidden: You do not have access to this resource.");
-    return false;
-  }
-
-  private boolean isUriPermitOnlyDriver(HttpServletRequest request, HttpServletResponse response)
-      throws Exception {
-
-    String uri = request.getRequestURI();
-
-    if (pathMatcher.match("/orders/{orderId}/deliver", uri) ||
-        pathMatcher.match("/orders", uri) && request.getMethod().equals("GET")) {
+    // OWNER 전용 API 확인
+    if (userStatus == UserStatus.OWNER && isOwnerApi(request)) {
       return true;
     }
 
-    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 에러
-    response.getWriter().write("Forbidden: You do not have access to this resource.");
+    // RIDER 전용 API 확인
+    if (userStatus == UserStatus.RIDER && isRiderApi(request)) {
+      return true;
+    }
+
+    // 접근 권한 없음
+    setErrorResponse(response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: Access denied");
     return false;
   }
 
+  private boolean isNormalUserApi(HttpServletRequest request) {
+    // NORMAL_USER에게 허용된 API
+
+    Map<String,String> normalUserApis = new HashMap<>();
+
+    normalUserApis.put("/users",null);
+    normalUserApis.put("/users/**",null);
+    normalUserApis.put("/reviews","Post");
+    normalUserApis.put("/reviews/{reviewId}",null);
+    normalUserApis.put("/reviews/{reviewId}/comments","Get");
+    normalUserApis.put("/shops","Get");
+    normalUserApis.put("/shops/*","Get");
+    normalUserApis.put("/orders/{orderId}","Get");
+    normalUserApis.put("/purchases/normalUser","Get");
+    normalUserApis.put("/purchases/{purchaseId}","Get");
+    normalUserApis.put("/purchases","Post");
+    normalUserApis.put("/purchases/{orderId}","Delete");
+
+    return isUriMatching(request, normalUserApis);
+  }
+
+  private boolean isOwnerApi(HttpServletRequest request) {
+    // OWNER 전용 API
+
+    Map<String,String> ownerApis = new HashMap<>();
+
+    ownerApis.put("/menus","Post");
+    ownerApis.put("/menus/*",null);
+    ownerApis.put("/reviews/{reviewId}/comments", "Post");
+    ownerApis.put("/reviews/{reviewId}/comments/*", null);
+    ownerApis.put("/shops","Post");
+    ownerApis.put("/shops/**",null);
+    ownerApis.put("/purchases/owner*",null);
+    ownerApis.put("/purchases/owner/**",null);
+    
+    return isUriMatching(request, ownerApis);
+  }
+
+  private boolean isRiderApi(HttpServletRequest request) {
+    // RIDER 전용 API
+    Map<String,String> riderApis = new HashMap<>();
+
+    riderApis.put("/purchases/rider*",null);
+
+    return isUriMatching(request, riderApis);
+  }
+
+  private boolean isUriMatching(HttpServletRequest request, Map<String,String> allowedApis) {
+    String uri = request.getRequestURI();
+    for (String allowedUri : allowedApis.keySet()) {
+      String method = allowedApis.get(allowedUri);
+      if (pathMatcher.match(allowedUri, uri) && (method == null || request.getMethod().equalsIgnoreCase(method))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private void setErrorResponse(HttpServletResponse response, int status, String message) throws Exception {
+    response.setStatus(status);
+    response.getWriter().write(message);
+  }
 }
