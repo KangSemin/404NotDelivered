@@ -57,9 +57,9 @@ public class ReviewController {
 
   @GetMapping("/shops/{shopId}")
   public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopReview(@PathVariable Long shopId,
-      @RequestParam(defaultValue = "1") Long starPointStart,
-      @RequestParam(defaultValue = "5") Long starPointEnd) {
-    List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId,starPointStart,starPointEnd);
+      @RequestParam(defaultValue = "1") Long minStarPoint,
+      @RequestParam(defaultValue = "5") Long maxStarPoint) {
+    List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId, minStarPoint, maxStarPoint);
     ApiResponse<List<ReviewListDto>> apiResponse = ApiResponse.success(HttpStatus.OK, "가게 리뷰 조회 성공",
         reviewDtos);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
