@@ -131,4 +131,15 @@ public class ShopService {
         .isClosing(foundShop.isClosing())
         .build();
   }
+
+  @Transactional
+  public void deleteShop(Long userId, Long shopId) {
+    Shop foundShop =
+        shopRepository
+            .findById(shopId)
+            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+
+    foundShop.validShopOwner(userId, foundShop.getOwnerUser().getUserId());
+    foundShop.closedShop();
+  }
 }
