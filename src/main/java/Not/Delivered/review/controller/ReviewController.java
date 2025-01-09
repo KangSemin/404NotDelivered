@@ -46,7 +46,7 @@ public class ReviewController {
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
-  @PatchMapping("{reviewId}")
+  @PatchMapping("/{reviewId}")
   public ResponseEntity<ApiResponse<ReviewDto>> updateReview(@PathVariable Long reviewId,
       @RequestBody @Valid ReviewUpdateRequestDto requestDto, @RequestAttribute Long userId) {
     ReviewDto review = reviewService.updateReview(userId, reviewId, requestDto);
