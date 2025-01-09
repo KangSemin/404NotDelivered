@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/reviews")
 public class ReviewController {
 
   private final ReviewService reviewService;
 
-  @PostMapping("/reviews")
+  @PostMapping
   public ResponseEntity<ApiResponse<ReviewDto>> createReview(@RequestAttribute Long userId,
       @RequestBody ReviewCreateRequestDto requestDto) {
     ReviewDto review = reviewService.createReview(userId, requestDto);
@@ -37,7 +37,7 @@ public class ReviewController {
   }
 
 
-  @DeleteMapping("/reviews/{reviewId}")
+  @DeleteMapping("/{reviewId}")
   public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId,
       @RequestAttribute Long userId) {
     reviewService.deleteReview(userId, reviewId);
@@ -45,7 +45,7 @@ public class ReviewController {
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
-  @PatchMapping("/reviews/{reviewId}")
+  @PatchMapping("{reviewId}")
   public ResponseEntity<ApiResponse<ReviewDto>> updateReview(@PathVariable Long reviewId,
       @RequestBody ReviewUpdateRequestDto requestDto, @RequestAttribute Long userId) {
     ReviewDto review = reviewService.updateReview(userId, reviewId, requestDto);
@@ -53,7 +53,7 @@ public class ReviewController {
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
-  @GetMapping("/shops/{shopId}/reviews")
+  @GetMapping("/shops/{shopId}")
   public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopReview(@PathVariable Long shopId) {
     List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId);
     ApiResponse<List<ReviewListDto>> apiResponse = ApiResponse.success(HttpStatus.OK, "가게 리뷰 조회 성공",
