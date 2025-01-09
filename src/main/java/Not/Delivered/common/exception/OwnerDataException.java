@@ -1,4 +1,4 @@
-package Not.Delivered.review;
+package Not.Delivered.common.exception;
 
 public class OwnerDataException extends RuntimeException {
 
