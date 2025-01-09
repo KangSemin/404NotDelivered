@@ -2,9 +2,9 @@ package Not.Delivered.review.service;
 
 import Not.Delivered.comment.domain.Dto.CommentReviewDto;
 import Not.Delivered.comment.repository.CommentRepository;
+import Not.Delivered.common.exception.OnlyOneDataException;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.repository.PurchaseRepository;
-import Not.Delivered.review.OnlyOneDateException;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
 import Not.Delivered.review.domain.Dto.ReviewListDto;
@@ -33,7 +33,7 @@ public class ReviewService {
 
   public ReviewDto createReview(Long userId, ReviewCreateRequestDto requestDto) {
     if (reviewRepository.existsByPurchase_PurchaseId(requestDto.purchaseId())) {
-      throw new OnlyOneDateException("One Purchase, One Review");
+      throw new OnlyOneDataException("One Purchase, One Review");
     }
     Purchase purchase = purchaseRepository.findById(requestDto.purchaseId()).orElseThrow(
         () -> new IllegalArgumentException(

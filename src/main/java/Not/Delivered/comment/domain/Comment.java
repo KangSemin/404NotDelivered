@@ -1,7 +1,7 @@
 package Not.Delivered.comment.domain;
 
 import Not.Delivered.common.entity.BaseTime;
-import Not.Delivered.review.OwnerDataException;
+import Not.Delivered.common.exception.OwnerDataException;
 import Not.Delivered.review.domain.Review;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.user.domain.User;

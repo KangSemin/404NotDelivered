@@ -1,9 +1,9 @@
 package Not.Delivered.review.domain;
 
 import Not.Delivered.common.entity.BaseTime;
+import Not.Delivered.common.exception.OwnerDataException;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
-import Not.Delivered.review.OwnerDataException;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.user.domain.User;

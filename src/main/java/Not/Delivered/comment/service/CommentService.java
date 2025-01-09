@@ -5,7 +5,7 @@ import Not.Delivered.comment.domain.Dto.CommentCreateRequestDto;
 import Not.Delivered.comment.domain.Dto.CommentDto;
 import Not.Delivered.comment.domain.Dto.CommentUpdateRequestDto;
 import Not.Delivered.comment.repository.CommentRepository;
-import Not.Delivered.review.OnlyOneDateException;
+import Not.Delivered.common.exception.OnlyOneDataException;
 import Not.Delivered.review.domain.Review;
 import Not.Delivered.review.repository.ReviewRepository;
 import Not.Delivered.shop.domain.Shop;
@@ -27,7 +27,7 @@ public class CommentService {
   public CommentDto createComment(Long userId, Long reviewId, CommentCreateRequestDto requestDto) {
 
     if (commentRepository.existsByReview_ReviewId(reviewId)) {
-      throw new OnlyOneDateException("One Review, One Comment");
+      throw new OnlyOneDataException("One Review, One Comment");
     }
 
     Review review = reviewRepository.findById(reviewId)
