@@ -61,7 +61,7 @@ public class CommentService {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
     Comment.commentReviewAndUserValidate(comment, reviewId, userId);
-    comment.setCommentContent(requestDto.commentContent());
+    comment.updateCommentContent(requestDto.commentContent());
     commentRepository.save(comment);
     return CommentDto.convertDto(comment);
   }
