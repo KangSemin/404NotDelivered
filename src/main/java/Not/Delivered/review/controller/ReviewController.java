@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -55,8 +56,10 @@ public class ReviewController {
   }
 
   @GetMapping("/shops/{shopId}")
-  public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopReview(@PathVariable Long shopId) {
-    List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId);
+  public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopReview(@PathVariable Long shopId,
+      @RequestParam(defaultValue = "1") Long starPointStart,
+      @RequestParam(defaultValue = "5") Long starPointEnd) {
+    List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId,starPointStart,starPointEnd);
     ApiResponse<List<ReviewListDto>> apiResponse = ApiResponse.success(HttpStatus.OK, "가게 리뷰 조회 성공",
         reviewDtos);
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
