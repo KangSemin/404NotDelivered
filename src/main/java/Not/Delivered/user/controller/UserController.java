@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")  // 기본 URL 경로
+@RequestMapping("/users")
 public class UserController {
 
   private final UserService userService;
@@ -25,17 +25,23 @@ public class UserController {
 
     UserResponseDto userResponseDto = userService.updateUser(userId, userUpdateDto);
 
-    return ResponseEntity.ok(
-        ApiResponse.success(HttpStatus.OK, "회원정보가 성공적으로 수정되었습니다.", userResponseDto)
-    );
+    ApiResponse<UserResponseDto> apiResponse = ApiResponse.success(HttpStatus.OK, "회원정보가 성공적으로 수정되었습니다.", userResponseDto);
+    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 
-  // 내 정보 조회
-  @GetMapping
-  public ResponseEntity<ApiResponse<UserResponseDto>> getMyInfo(@RequestAttribute Long userId) {
-    UserResponseDto userResponseDto = userService.getUserById(userId);
+  // 회원탈퇴
+  @DeleteMapping
+  public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestAttribute Long userId) {
+    userService.deleteUser(userId);
+    ApiResponse<Void> apiResponse = ApiResponse.success(HttpStatus.OK, "회원 탈퇴가 성공적으로 처리되었습니다.", null);
+    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+  }
 
-    return ResponseEntity.ok(
-        ApiResponse.success(HttpStatus.OK, "회원 정보 조회에 성공했습니다.", userResponseDto));
+  // 회원정보조회
+  @GetMapping
+  public ResponseEntity<ApiResponse<UserResponseDto>> getUser(@RequestAttribute Long userId) {
+    UserResponseDto userResponseDto = userService.getUserById(userId);
+    ApiResponse<UserResponseDto> apiResponse = ApiResponse.success(HttpStatus.OK, "회원 정보 조회 성공", userResponseDto);
+    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 }

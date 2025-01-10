@@ -10,15 +10,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
   // NORMAL_USER용
-  List<Purchase> findByPurchaseUser_UserId(Long userId);
-  List<Purchase> findByPurchaseUser_UserIdAndPurchaseStatus(Long userId, PurchaseStatus status);
-  Optional<Purchase> findByPurchaseIdAndPurchaseUser_UserId(Long purchaseId, Long userId);
+  List<Purchase> findByPurchaseUser_UserIdAndIsCancelledFalse(Long userId);
+  List<Purchase> findByPurchaseUser_UserIdAndPurchaseStatusAndIsCancelledFalse(Long userId, PurchaseStatus status);
+  Optional<Purchase> findByPurchaseIdAndPurchaseUser_UserIdAndIsCancelledFalse(Long purchaseId, Long userId);
+
 
   // OWNER용
-  Optional<List<Purchase>> findByShop_OwnerUser_UserId(Long ownerId);
-  Optional<List<Purchase>> findByShop_OwnerUser_UserIdAndPurchaseStatus(Long ownerId, PurchaseStatus status);
-  Optional<Purchase> findByPurchaseIdAndShop_OwnerUser_UserId(Long purchaseId, Long ownerId);
+  List<Purchase> findByShop_OwnerUser_UserIdAndIsCancelledFalse(Long ownerId);
+  List<Purchase> findByShop_OwnerUser_UserIdAndPurchaseStatusAndIsCancelledFalse(Long ownerId, PurchaseStatus status);
+  Optional<Purchase> findByPurchaseIdAndShop_OwnerUser_UserIdAndIsCancelledFalse(Long purchaseId, Long ownerId);
 
-  // 상태로 주문 조회
-  List<Purchase> findByPurchaseStatus(PurchaseStatus status);
+  // RIDER용
+  List<Purchase> findByPurchaseStatusAndDeliveringUserIsNullAndIsCancelledFalse(PurchaseStatus status);
+  List<Purchase> findByPurchaseStatusAndDeliveringUser_UserIdAndIsCancelledFalse(PurchaseStatus status, Long riderId);
+  List<Purchase> findByDeliveringUser_UserIdAndIsCancelledFalse(Long riderId);
 }

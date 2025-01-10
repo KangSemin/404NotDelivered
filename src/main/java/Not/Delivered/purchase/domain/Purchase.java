@@ -77,6 +77,13 @@ public class Purchase extends BaseTime {
     return false;
   }
 
+  public boolean isShopOwnedByThisUserId(Long userId) {
+    if (this.shop.getOwnerUser().getUserId().equals(userId)) {
+      return true;
+    }
+    return false;
+  }
+
   // 주문 취소 메서드
   public void cancel() {
     if (this.purchaseStatus != PurchaseStatus.PENDING) {

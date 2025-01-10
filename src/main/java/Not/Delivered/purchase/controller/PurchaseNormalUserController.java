@@ -2,6 +2,7 @@ package Not.Delivered.purchase.controller;
 
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
+import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.purchase.dto.PurchaseCreateDto;
 import Not.Delivered.purchase.dto.PurchaseDto;
 import Not.Delivered.purchase.service.PurchaseService;
@@ -9,6 +10,7 @@ import Not.Delivered.user.domain.UserStatus;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/normalUser/purchases")
@@ -34,10 +37,11 @@ public class PurchaseNormalUserController {
       @RequestAttribute Long userId,
       @Valid @RequestBody PurchaseCreateDto purchaseCreateDto) {
 
-//    유저검증로직: 일반 사용자
+    log.info("createPurchase logic start: ");
 
     PurchaseDto newPurchaseDto = purchaseService.createPurchase(userId, purchaseCreateDto);
 
+    log.info("purchased created: ");
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(ApiResponse.success(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다.", newPurchaseDto));
   }
@@ -48,7 +52,6 @@ public class PurchaseNormalUserController {
       @RequestAttribute Long userId,
       @PathVariable Long purchaseId) {
 
-//    유저검증로직: 일반 사용자
 
     purchaseService.cancelPurchase(userId, purchaseId);
 
@@ -61,11 +64,9 @@ public class PurchaseNormalUserController {
   @GetMapping
   public ResponseEntity<ApiResponse<List<PurchaseDto>>> getUserPurchases(
       @RequestAttribute Long userId,
-      @RequestParam(required = false) String purchaseStatus) {
+      @RequestParam(required = false) PurchaseStatus purchaseStatus) {
 
-//    유저검증로직: 일반 사용자
-
-    List<PurchaseDto> purchases = purchaseService.getPurchasesForUser(userId, purchaseStatus);
+    List<PurchaseDto> purchases = purchaseService.getPurchaseListForUser(userId, purchaseStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchases)
@@ -77,8 +78,6 @@ public class PurchaseNormalUserController {
   public ResponseEntity<ApiResponse<PurchaseDto>> getUserPurchase(
       @RequestAttribute Long userId,
       @PathVariable Long purchaseId) {
-
-//    유저검증로직: 일반 사용자
 
     PurchaseDto purchase = purchaseService.getPurchaseForUser(userId, purchaseId);
 
