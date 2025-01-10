@@ -32,9 +32,9 @@ public class PurchaseTrace {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
 
-//    if("GET".equalsIgnoreCase(request.getMethod())){
-//      return joinPoint.proceed();
-//    }
+    if("GET".equalsIgnoreCase(request.getMethod())){
+      return joinPoint.proceed();
+    }
 
     Object result = joinPoint.proceed();
     logger.info(getLogMessage(request, result));
