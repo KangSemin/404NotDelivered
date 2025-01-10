@@ -3,11 +3,10 @@ package Not.Delivered.user.dto;
 import Not.Delivered.common.entity.Address;
 import Not.Delivered.user.domain.User;
 import Not.Delivered.user.domain.UserStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class UserResponseDto {
 
   private Long userId;
