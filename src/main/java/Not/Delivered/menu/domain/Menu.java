@@ -2,7 +2,14 @@ package Not.Delivered.menu.domain;
 
 import Not.Delivered.menu.dto.MenuUpdateRequestDto;
 import Not.Delivered.shop.domain.Shop;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,5 +55,9 @@ public class Menu {
     if (Objects.nonNull(dto.getPrice())) {
       this.price = dto.getPrice();
     }
+  }
+
+  public void deletedMenu() {
+    this.isDeleted = true;
   }
 }

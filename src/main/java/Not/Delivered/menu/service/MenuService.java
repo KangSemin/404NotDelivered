@@ -61,4 +61,21 @@ public class MenuService {
         .price(foundMenu.getPrice())
         .build();
   }
+
+  @Transactional
+  public void deleteMenu(Long userId, UserStatus userRole, Long shopId, Long menuId) {
+    if (!userRole.equals(UserStatus.OWNER)) {
+      throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
+    }
+
+    shopService.foundAndValidate(userId, shopId);
+
+    Menu foundMenu =
+        menuRepository
+            .findById(menuId)
+            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+
+    shopService.foundAndValidate(userId, shopId);
+    foundMenu.deletedMenu();
+  }
 }
