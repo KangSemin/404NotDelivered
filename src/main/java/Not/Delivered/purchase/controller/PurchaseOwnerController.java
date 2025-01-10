@@ -63,7 +63,6 @@ public class PurchaseOwnerController {
       @PathVariable Long purchaseId,
       @Valid @RequestBody PurchaseStatusUpdateDto request) {
 
-// 유저검증로직: 가게 주인
 
     PurchaseStatus newStatus = request.getPurchaseStatus();
 

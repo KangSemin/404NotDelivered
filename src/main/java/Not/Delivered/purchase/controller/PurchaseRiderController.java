@@ -52,8 +52,6 @@ public class PurchaseRiderController {
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-// 유저검증로직: 라이더
-
     PurchaseOfRiderDto purchase = purchaseService.getPurchaseForRider(userId, purchaseId);
 
     return ResponseEntity.ok(
@@ -68,8 +66,6 @@ public class PurchaseRiderController {
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId,
       @Valid @RequestBody PurchaseStatusUpdateDto request) {
-
-// 유저검증로직: 라이더
 
     PurchaseStatus newStatus = request.getPurchaseStatus();
 

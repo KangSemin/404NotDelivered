@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j // 로그확인용
 @Service
 @RequiredArgsConstructor // 의존성 주입
 public class PurchaseService {
@@ -35,9 +34,6 @@ public class PurchaseService {
   // 주문 생성
   @Transactional
   public PurchaseDto createPurchase(Long userId, PurchaseCreateDto purchaseCreateDto) {
-    log.info("로그인중인 User 아이디: " + userId.toString());
-    log.info("Shop 아이디: " + purchaseCreateDto.getShopId().toString());
-    log.info("Menu 아이디: " + purchaseCreateDto.getMenuId().toString());
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));

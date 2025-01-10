@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/normalUser/purchases")
@@ -37,11 +36,9 @@ public class PurchaseNormalUserController {
       @RequestAttribute Long userId,
       @Valid @RequestBody PurchaseCreateDto purchaseCreateDto) {
 
-    log.info("createPurchase logic start: ");
 
     PurchaseDto newPurchaseDto = purchaseService.createPurchase(userId, purchaseCreateDto);
 
-    log.info("purchased created: ");
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(ApiResponse.success(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다.", newPurchaseDto));
   }
