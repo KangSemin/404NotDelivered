@@ -2,21 +2,21 @@ package Not.Delivered.user.dto;
 
 
 import Not.Delivered.common.entity.Address;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import Not.Delivered.user.domain.UserStatus;
+import lombok.NoArgsConstructor;
+
 @Getter
-@Setter
+@NoArgsConstructor
 public class UserUpdateDto {
 
-	@NotBlank
 	private String userName;
-
-	@NotBlank
 	private String email;
-
+	private String password;
 	private String phoneNumber;
-
 	private Address address;
+	private UserStatus userStatus;
+
 }

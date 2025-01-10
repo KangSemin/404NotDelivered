@@ -33,9 +33,7 @@ public class PurchaseOwnerController {
   @GetMapping
   public ResponseEntity<ApiResponse<List<PurchaseDto>>> getOwnerPurchaseList(
       @RequestAttribute Long userId,
-      @RequestParam(required = false) String purchaseStatus) {
-
-//    유저검증로직: 가게 주인
+      @RequestParam(required = false) PurchaseStatus purchaseStatus) {
 
     List<PurchaseDto> purchasesDto = purchaseService.getPurchaseListForOwner(userId,
         purchaseStatus);
@@ -51,8 +49,6 @@ public class PurchaseOwnerController {
       @RequestAttribute Long userId,
       @PathVariable Long purchaseId) {
 
-//    유저검증로직: 가게 주인
-
     PurchaseDto purchase = purchaseService.getPurchaseForOwner(userId, purchaseId);
 
     return ResponseEntity.ok(
@@ -67,7 +63,6 @@ public class PurchaseOwnerController {
       @PathVariable Long purchaseId,
       @Valid @RequestBody PurchaseStatusUpdateDto request) {
 
-// 유저검증로직: 가게 주인
 
     PurchaseStatus newStatus = request.getPurchaseStatus();
 

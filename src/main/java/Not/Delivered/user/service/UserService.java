@@ -16,29 +16,18 @@ public class UserService {
 
   private final UserRepository userRepository;
 
-  public UserResponseDto getUserById(Long userId) {
-    if (userId == null) {
-      throw new IllegalArgumentException("User ID and user details must not be null");
-    }
-
-    User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User ID not found"));
-
-    return UserResponseDto.convertToDto(user);
-  }
-
-
   public UserResponseDto updateUser(Long userId, UserUpdateDto userDetails) {
 
-    if (userId == null || userDetails == null) {
+    if (userDetails == null) {
       throw new IllegalArgumentException("User ID and user details must not be null");
     }
 
-    User user = userRepository.findById(userId)
-        .orElseThrow(
-            () -> new TempUserNotFoundException("User Not Found."));
+    User user = userRepository.findByUserIdAndIsWithdrawalFalse(userId)
+        .orElseThrow(() -> new TempUserNotFoundException("User Not Found or User is Withdrawn."));
 
-//   업데이트 로직 미구현
+    user.update(userDetails);
 
+    userRepository.save(user);
 
     return UserResponseDto.convertToDto(user);
   }
@@ -48,7 +37,23 @@ public class UserService {
       throw new IllegalArgumentException("User ID must not be null");
     }
 
-    userRepository.deleteById(userId);
+    User user = userRepository.findByUserIdAndIsWithdrawalFalse(userId)
+        .orElseThrow(() -> new TempUserNotFoundException("User Not Found or Already Withdrawn."));
+
+    user.setIsWithdrawal(true);
+
+    userRepository.save(user);
+  }
+
+  public UserResponseDto getUserById(Long userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID and user details must not be null");
+    }
+
+    User user = userRepository.findByUserIdAndIsWithdrawalFalse(userId)
+        .orElseThrow(() -> new IllegalArgumentException("User ID not found or User is Withdrawn"));
+
+    return UserResponseDto.convertToDto(user);
   }
 
 }

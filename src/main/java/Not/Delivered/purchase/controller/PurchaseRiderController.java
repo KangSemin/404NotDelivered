@@ -5,6 +5,7 @@ import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.purchase.dto.PurchaseDto;
+import Not.Delivered.purchase.dto.PurchaseOfRiderDto;
 import Not.Delivered.purchase.dto.PurchaseStatusUpdateDto;
 import Not.Delivered.purchase.service.PurchaseService;
 import Not.Delivered.user.domain.UserStatus;
@@ -32,14 +33,12 @@ public class PurchaseRiderController {
 
   // 주문 목록 조회 - RIDER 배달 가능한 주문 조회
   @GetMapping
-  public ResponseEntity<ApiResponse<List<PurchaseDto>>> getRiderPurchaseList(
+  public ResponseEntity<ApiResponse<List<PurchaseOfRiderDto>>> getRiderPurchaseList(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
-      @RequestParam(required = false) String purchaseStatus) {
+      @RequestParam(required = false) PurchaseStatus purchaseStatus) {
 
-// 유저검증로직: 라이더
-
-    List<PurchaseDto> purchases = purchaseService.getPurchaseListForRider(userId, purchaseStatus);
+    List<PurchaseOfRiderDto> purchases = purchaseService.getPurchaseListForRider(userId, purchaseStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 목록 조회에 성공했습니다.", purchases)
@@ -48,14 +47,12 @@ public class PurchaseRiderController {
 
   // 주문 상세 조회 - RIDER
   @GetMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<PurchaseDto>> getRiderPurchase(
+  public ResponseEntity<ApiResponse<PurchaseOfRiderDto>> getRiderPurchase(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId) {
 
-// 유저검증로직: 라이더
-
-    PurchaseDto purchase = purchaseService.getPurchaseForRider(userId, purchaseId);
+    PurchaseOfRiderDto purchase = purchaseService.getPurchaseForRider(userId, purchaseId);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 조회에 성공했습니다.", purchase)
@@ -64,17 +61,15 @@ public class PurchaseRiderController {
 
   // 주문 상태 변경 - RIDER (예: COOKED <-> DELIVERING <-> DELIVERED)
   @PatchMapping("/{purchaseId}")
-  public ResponseEntity<ApiResponse<PurchaseDto>> updateRiderPurchaseStatus(
+  public ResponseEntity<ApiResponse<PurchaseOfRiderDto>> updateRiderPurchaseStatus(
       @RequestAttribute Long userId,
       @RequestAttribute UserStatus userStatus,
       @PathVariable Long purchaseId,
       @Valid @RequestBody PurchaseStatusUpdateDto request) {
 
-// 유저검증로직: 라이더
-
     PurchaseStatus newStatus = request.getPurchaseStatus();
 
-    PurchaseDto updatedPurchase = purchaseService.updatePurchaseStatusByRider(userId, purchaseId, newStatus);
+    PurchaseOfRiderDto updatedPurchase = purchaseService.updatePurchaseStatusByRider(userId, purchaseId, newStatus);
 
     return ResponseEntity.ok(
         ApiResponse.success(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다.", updatedPurchase)
