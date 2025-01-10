@@ -77,7 +77,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     Map<String,String> ownerApis = new HashMap<>();
 
     ownerApis.put("/menus","Post");
-    ownerApis.put("/menus/*",null);
+    ownerApis.put("/menus/**",null);
     ownerApis.put("/reviews/{reviewId}/comments", "Post");
     ownerApis.put("/reviews/{reviewId}/comments/*", null);
     ownerApis.put("/shops","Post");
