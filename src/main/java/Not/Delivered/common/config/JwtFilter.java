@@ -47,11 +47,11 @@ public class JwtFilter extends OncePerRequestFilter {
 			String token = authHeader.substring(BEARER.length());
 			if (jwtConfig.validateToken(token)) {
 
-//				if(logoutService.isBlacklisted(token)){
-//					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//					response.getWriter().write("블랙리스트에 등록된 토큰입니다.");
-//					return;
-//				}
+				if(logoutService.isBlacklisted(token)){
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					response.getWriter().write("블랙리스트에 등록된 토큰입니다.");
+					return;
+				}
 
 				Long userId = jwtConfig.getUserIdFromToken(token);
 				UserStatus userStatus = jwtConfig.getUserStatusFromToken(token);
