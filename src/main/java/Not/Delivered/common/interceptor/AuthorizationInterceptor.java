@@ -66,6 +66,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     normalUserApis.put("/purchases/{purchaseId}","Get");
     normalUserApis.put("/purchases","Post");
     normalUserApis.put("/purchases/{orderId}","Delete");
+    normalUserApis.put("/normalUser/**",null);
 
     return isUriMatching(request, normalUserApis);
   }
@@ -81,6 +82,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     ownerApis.put("/reviews/{reviewId}/comments/*", null);
     ownerApis.put("/shops","Post");
     ownerApis.put("/shops/**",null);
+    ownerApis.put("/owner/**",null);
     ownerApis.put("/purchases/owner*",null);
     ownerApis.put("/purchases/owner/**",null);
     
