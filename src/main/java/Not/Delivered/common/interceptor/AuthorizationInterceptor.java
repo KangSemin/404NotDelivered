@@ -13,11 +13,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
   private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+      throws Exception {
 
     String userStatusValue = (String) request.getAttribute("userStatus");
     if (userStatusValue == null) {
-      setErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing userStatus");
+      setErrorResponse(
+          response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing userStatus");
       return false;
     }
 
@@ -25,7 +27,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     try {
       userStatus = UserStatus.valueOf(userStatusValue);
     } catch (IllegalArgumentException e) {
-      setErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid userStatus");
+      setErrorResponse(
+          response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid userStatus");
       return false;
     }
 
@@ -52,20 +55,20 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
   private boolean isNormalUserApi(HttpServletRequest request) {
     // NORMAL_USER에게 허용된 API
 
-    Map<String,String> normalUserApis = new HashMap<>();
+    Map<String, String> normalUserApis = new HashMap<>();
 
-    normalUserApis.put("/users",null);
-    normalUserApis.put("/users/**",null);
-    normalUserApis.put("/reviews","Post");
-    normalUserApis.put("/reviews/{reviewId}",null);
-    normalUserApis.put("/reviews/{reviewId}/comments","Get");
-    normalUserApis.put("/shops","Get");
-    normalUserApis.put("/shops/*","Get");
-    normalUserApis.put("/orders/{orderId}","Get");
-    normalUserApis.put("/purchases/normalUser","Get");
-    normalUserApis.put("/purchases/{purchaseId}","Get");
-    normalUserApis.put("/purchases","Post");
-    normalUserApis.put("/purchases/{orderId}","Delete");
+    normalUserApis.put("/users", null);
+    normalUserApis.put("/users/**", null);
+    normalUserApis.put("/reviews", "Post");
+    normalUserApis.put("/reviews/{reviewId}", null);
+    normalUserApis.put("/reviews/{reviewId}/comments", "Get");
+    normalUserApis.put("/shops", "Get");
+    normalUserApis.put("/shops/*", "Get");
+    normalUserApis.put("/orders/{orderId}", "Get");
+    normalUserApis.put("/purchases/normalUser", "Get");
+    normalUserApis.put("/purchases/{purchaseId}", "Get");
+    normalUserApis.put("/purchases", "Post");
+    normalUserApis.put("/purchases/{orderId}", "Delete");
 
     return isUriMatching(request, normalUserApis);
   }
@@ -73,41 +76,43 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
   private boolean isOwnerApi(HttpServletRequest request) {
     // OWNER 전용 API
 
-    Map<String,String> ownerApis = new HashMap<>();
+    Map<String, String> ownerApis = new HashMap<>();
 
-    ownerApis.put("/menus","Post");
-    ownerApis.put("/menus/*",null);
+    ownerApis.put("/menus", "Post");
+    ownerApis.put("/menus/**", null);
     ownerApis.put("/reviews/{reviewId}/comments", "Post");
     ownerApis.put("/reviews/{reviewId}/comments/*", null);
-    ownerApis.put("/shops","Post");
-    ownerApis.put("/shops/**",null);
-    ownerApis.put("/purchases/owner*",null);
-    ownerApis.put("/purchases/owner/**",null);
-    
+    ownerApis.put("/shops", "Post");
+    ownerApis.put("/shops/**", null);
+    ownerApis.put("/purchases/owner*", null);
+    ownerApis.put("/purchases/owner/**", null);
+
     return isUriMatching(request, ownerApis);
   }
 
   private boolean isRiderApi(HttpServletRequest request) {
     // RIDER 전용 API
-    Map<String,String> riderApis = new HashMap<>();
+    Map<String, String> riderApis = new HashMap<>();
 
-    riderApis.put("/purchases/rider*",null);
+    riderApis.put("/purchases/rider*", null);
 
     return isUriMatching(request, riderApis);
   }
 
-  private boolean isUriMatching(HttpServletRequest request, Map<String,String> allowedApis) {
+  private boolean isUriMatching(HttpServletRequest request, Map<String, String> allowedApis) {
     String uri = request.getRequestURI();
     for (String allowedUri : allowedApis.keySet()) {
       String method = allowedApis.get(allowedUri);
-      if (pathMatcher.match(allowedUri, uri) && (method == null || request.getMethod().equalsIgnoreCase(method))) {
+      if (pathMatcher.match(allowedUri, uri)
+          && (method == null || request.getMethod().equalsIgnoreCase(method))) {
         return true;
       }
     }
     return false;
   }
 
-  private void setErrorResponse(HttpServletResponse response, int status, String message) throws Exception {
+  private void setErrorResponse(HttpServletResponse response, int status, String message)
+      throws Exception {
     response.setStatus(status);
     response.getWriter().write(message);
   }
