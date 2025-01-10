@@ -30,9 +30,9 @@ public class MenuController {
   @PostMapping
   public ResponseEntity<ApiResponse<MenuCreateResponseDto>> createMenu(
       @RequestAttribute Long userId,
-      @RequestAttribute UserStatus userRole,
+      @RequestAttribute UserStatus userStatus,
       @Valid @RequestBody MenuCreateRequestDto dto) {
-    MenuCreateResponseDto menuCreateResponseDto = menuService.createMenu(userId, userRole, dto);
+    MenuCreateResponseDto menuCreateResponseDto = menuService.createMenu(userId, userStatus, dto);
     ApiResponse<MenuCreateResponseDto> response =
         ApiResponse.success(HttpStatus.CREATED, null, menuCreateResponseDto);
 
