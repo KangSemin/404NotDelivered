@@ -62,10 +62,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     normalUserApis.put("/shops","Get");
     normalUserApis.put("/shops/*","Get");
     normalUserApis.put("/orders/{orderId}","Get");
-//    normalUserApis.put("/purchases/normalUser","Get");
-//    normalUserApis.put("/purchases/{purchaseId}","Get");
-//    normalUserApis.put("/purchases","Post");
-//    normalUserApis.put("/purchases/{orderId}","Delete");
     normalUserApis.put("/normalUser/**",null); // 추가함
 
     return isUriMatching(request, normalUserApis);
@@ -83,8 +79,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     ownerApis.put("/shops","Post");
     ownerApis.put("/shops/**",null);
     ownerApis.put("/owner/purchases/**",null); // 수정
-//    ownerApis.put("/purchases/owner*",null);
-//    ownerApis.put("/purchases/owner/**",null);
     
     return isUriMatching(request, ownerApis);
   }
