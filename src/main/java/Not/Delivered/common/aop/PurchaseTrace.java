@@ -5,7 +5,6 @@ import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.purchase.dto.PurchaseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -45,12 +44,12 @@ public class PurchaseTrace {
   private String getLogMessage(HttpServletRequest request, Object result) {
     StringBuilder logMessage = new StringBuilder();
 
-    String purchaseId = ((PurchaseDto) ((ArrayList) ((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).get(0)).getPurchaseId().toString();
-    String shopId = ((PurchaseDto) ((ArrayList) ((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).get(0)).getShopId().toString();
-    String purchaseStatus = ((PurchaseDto) ((ArrayList) ((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).get(0)).getPurchaseStatus().toString();
+    String purchaseId = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
+        .getBody()).getData()).getPurchaseId().toString();
+    String shopId = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
+        .getBody()).getData()).getShopId().toString();
+    String purchaseStatus = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
+        .getBody()).getData()).getPurchaseStatus().toString();
 
     logMessage.append("[purchase log ").append(LocalDateTime.now()).append("] : requestUser = ")
         .append(request.getAttribute("userId")).append(", requestURL = ")
