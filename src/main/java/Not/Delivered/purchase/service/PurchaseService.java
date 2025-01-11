@@ -230,10 +230,10 @@ public class PurchaseService {
       return true;
     } else if (openTime.isBefore(closeTime)) {
       // 같은 날에 영업 종료
-      return !currentTime.isBefore(openTime) && !currentTime.isAfter(closeTime);
+      return !(currentTime.isBefore(openTime) || currentTime.isAfter(closeTime));
     } else {
       // 자정을 넘어 다음 날에 영업 종료하는 경우
-      return !currentTime.isBefore(openTime) || !currentTime.isAfter(closeTime);
+      return !(currentTime.isBefore(openTime) && currentTime.isAfter(closeTime));
     }
   }
 
