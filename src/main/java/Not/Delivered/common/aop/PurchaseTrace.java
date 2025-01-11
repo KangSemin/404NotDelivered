@@ -26,8 +26,7 @@ public class PurchaseTrace {
   private final Logger logger = LoggerFactory.getLogger(PurchaseTrace.class.getName());
 
   @Around("execution(public * Not.Delivered.purchase.controller.PurchaseOwnerController.*(..))||"
-      + "execution(public * Not.Delivered.purchase.controller.PurchaseNormalUserController.*(..))||"
-      + "execution(public * Not.Delivered.purchase.controller.PurchaseRiderController.*(..))")
+      + "execution(public * Not.Delivered.purchase.controller.PurchaseNormalUserController.*(..))")
   public Object purchaseLogging(ProceedingJoinPoint joinPoint) throws Throwable {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
