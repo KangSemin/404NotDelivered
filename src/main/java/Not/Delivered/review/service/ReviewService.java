@@ -44,9 +44,8 @@ public class ReviewService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("User not found with ID:" + userId));
 
-    Shop shop = shopRepository.findById(purchase.getShop().getShopId()).orElseThrow(
-        () -> new IllegalArgumentException(
-            "Shop not found with ID:" + purchase.getShop().getShopId()));
+    Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(purchase.getShop().getShopId());
+    Shop shop = Review.shopIsNotClosingValidate(optionalShop,purchase.getShop().getShopId());
 
     Review review = Review.builder().reviewContent(requestDto.reviewContent())
         .starPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
@@ -58,7 +57,7 @@ public class ReviewService {
 
   public void deleteReview(Long userId, Long reviewId) {
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new IllegalArgumentException("Review not fount with ID:" + reviewId));
+        .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
 
     Review.ownerValidate(review, userId);
     reviewRepository.delete(review);
@@ -67,7 +66,11 @@ public class ReviewService {
 
   public ReviewDto updateReview(Long userId, Long reviewId, ReviewUpdateRequestDto requestDto) {
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new IllegalArgumentException("Review not fount with ID:" + reviewId));
+        .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
+
+    if(shopRepository.findByShopIdAndIsClosing(review.getShop().getShopId()).isEmpty()) {
+      throw new IllegalArgumentException("Shop not found with ID:" + review.getShop().getShopId());
+    }
 
     Review.ownerValidate(review, userId);
 
@@ -79,6 +82,10 @@ public class ReviewService {
   }
 
   public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+
+    if(shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
+      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+    }
 
     List<Review> reviewList = reviewRepository.findAllByShopShopIdAndStarPointBetweenOrderByCreatedAtDesc(
         shopId, minStarPoint, maxStarPoint);
