@@ -12,6 +12,7 @@ import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.repository.ShopRepository;
 import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,9 @@ public class CommentService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
 
-    Shop shop = shopRepository.findById(review.getShop().getShopId())
-        .orElseThrow(() -> new IllegalArgumentException("Review not exist Shop."));
+    Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(
+        review.getShop().getShopId());
+    Shop shop = Review.shopIsNotClosingValidate(optionalShop, review.getShop().getShopId());
 
     Comment.shopOwnerValidate(shop, userId);
 
@@ -60,6 +62,13 @@ public class CommentService {
       CommentUpdateRequestDto requestDto) {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
+
+    if (shopRepository.findByShopIdAndIsClosing(comment.getReview().getShop().getShopId())
+        .isEmpty()) {
+      throw new IllegalArgumentException(
+          "Shop not found with ID:" + comment.getReview().getShop().getShopId());
+    }
+
     Comment.commentReviewAndUserValidate(comment, reviewId, userId);
     comment.updateCommentContent(requestDto.commentContent());
     commentRepository.save(comment);
