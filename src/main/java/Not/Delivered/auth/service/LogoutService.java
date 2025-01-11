@@ -19,7 +19,6 @@ public class LogoutService {
   }
 
   public boolean isBlacklisted(String token) {
-    return false;
-//   return Boolean.TRUE.equals(redisTemplate.hasKey(token));
+    return Boolean.TRUE.equals(redisTemplate.hasKey(token));
   }
 }
