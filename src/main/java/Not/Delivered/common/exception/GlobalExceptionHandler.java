@@ -25,88 +25,28 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
   }
 
-  @ExceptionHandler(OwnerDataException.class)
-  public ResponseEntity<ApiResponse> handleOwnerDataException(OwnerDataException exception) {
+  @ExceptionHandler({OwnerDataException.class, TempUserNotFoundException.class,
+      AccessDeniedException.class, UnauthorizedActionException.class})
+  public ResponseEntity<ApiResponse> handleOwnerDataException(RuntimeException exception) {
     ApiResponse apiResponse = ApiResponse.error(HttpStatus.FORBIDDEN, exception.getMessage());
     log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
     return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
   }
 
-  @ExceptionHandler(IllegalArgumentException.class)
+  @ExceptionHandler({IllegalArgumentException.class, ResponseStatusException.class,
+      MethodArgumentNotValidException.class, IllegalStateException.class})
   public ResponseEntity<ApiResponse> handleIllegalArgumentExceptionException(
-      IllegalArgumentException exception) {
+      RuntimeException exception) {
     ApiResponse apiResponse = ApiResponse.error(HttpStatus.BAD_REQUEST, exception.getMessage());
     log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
     return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(TempUserNotFoundException.class)
-  public ResponseEntity<ApiResponse> handleTempUserNotFoundException(
-      TempUserNotFoundException exception) {
+  @ExceptionHandler({PurchaseNotFoundException.class, EntityNotFoundException.class})
+  public ResponseEntity<ApiResponse> handlePurchaseNotFoundException(RuntimeException exception) {
     ApiResponse apiResponse = ApiResponse.error(HttpStatus.NOT_FOUND, exception.getMessage());
     log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
     return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
-  }
-
-  @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<ApiResponse> handleResponseStatusException(
-      ResponseStatusException exception) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.BAD_REQUEST, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-  }
-
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(
-      MethodArgumentNotValidException exception) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.BAD_REQUEST, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-  }
-
-  @ExceptionHandler(AccessDeniedException.class)
-  public ResponseEntity<ApiResponse> handleAccessDeniedException(
-      AccessDeniedException exception
-  ) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.FORBIDDEN, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
-  }
-
-  @ExceptionHandler(PurchaseNotFoundException.class)
-  public ResponseEntity<ApiResponse> handlePurchaseNotFoundException(
-      PurchaseNotFoundException exception
-  ) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.NOT_FOUND, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
-  }
-
-  @ExceptionHandler(UnauthorizedActionException.class)
-  public ResponseEntity<ApiResponse> handleUnauthorizedActionException(
-      UnauthorizedActionException exception
-  ) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.FORBIDDEN, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
-  }
-
-  @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<ApiResponse> handleEntityNotFoundException(
-      EntityNotFoundException exception
-  ) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.NOT_FOUND, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
-  }
-
-  @ExceptionHandler(IllegalStateException.class)
-  public ResponseEntity<ApiResponse> handleIllegalStateException(
-      IllegalStateException exception
-  ) {
-    ApiResponse apiResponse = ApiResponse.error(HttpStatus.BAD_REQUEST, exception.getMessage());
-    log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());
-    return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(Exception.class)
