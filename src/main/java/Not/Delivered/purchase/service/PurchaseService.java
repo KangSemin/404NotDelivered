@@ -13,11 +13,11 @@ import Not.Delivered.shop.repository.ShopRepository;
 import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +35,25 @@ public class PurchaseService {
   @Transactional
   public PurchaseDto createPurchase(Long userId, PurchaseCreateDto purchaseCreateDto) {
 
-    User user = userRepository.findById(userId)
+    User user = userRepository.findByUserIdAndIsWithdrawalFalse(userId)
         .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-    Shop shop = shopRepository.findById(purchaseCreateDto.getShopId())
+    Shop shop = shopRepository.findByShopIdAndIsClosing(purchaseCreateDto.getShopId())
         .orElseThrow(() -> new EntityNotFoundException("가게를 찾을 수 없습니다."));
 
     Menu menu = menuRepository.findById(purchaseCreateDto.getMenuId())
         .orElseThrow(() -> new EntityNotFoundException("메뉴를 찾을 수 없습니다."));
+
+    // 메뉴 가격이 가게의 최소 주문 금액 이상인지 확인
+    if (menu.getPrice() < shop.getMinOrderPrice()) {
+      throw new IllegalArgumentException("주문 금액이 가게의 최소 주문 금액보다 적습니다.");
+    }
+
+    // 현재 시간이 가게의 영업 시간 내인지 확인
+    LocalTime now = LocalTime.now();
+    if (!isWithinOperatingHours(now, shop.getOpenTime(), shop.getCloseTime())) {
+      throw new IllegalArgumentException("현재는 가게의 영업 시간이 아닙니다.");
+    }
 
     Purchase purchase = Purchase.builder()
         .purchaseUser(user)
@@ -211,6 +222,19 @@ public class PurchaseService {
     }
 
     return PurchaseOfRiderDto.convertToDto(purchaseRepository.save(purchase));
+  }
+
+  private boolean isWithinOperatingHours(LocalTime currentTime, LocalTime openTime, LocalTime closeTime) {
+    if (openTime.equals(closeTime)) {
+      // 24시간 영업
+      return true;
+    } else if (openTime.isBefore(closeTime)) {
+      // 같은 날에 영업 종료
+      return !(currentTime.isBefore(openTime) || currentTime.isAfter(closeTime));
+    } else {
+      // 자정을 넘어 다음 날에 영업 종료하는 경우
+      return !(currentTime.isBefore(openTime) && currentTime.isAfter(closeTime));
+    }
   }
 
 
