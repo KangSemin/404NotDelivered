@@ -23,6 +23,17 @@
 
 이 프로젝트는 Spring Boot를 사용하여 개발된 학습용 배달 애플리케이션입니다. 기본적인 인증과 다양한 관리 기능을 포함하고 있으며, JWT 인증, 예외 처리, 로깅 등 공통 기능을 제공합니다.
 
+## 기술 스택
+- Java 17
+- Spring Boot 3.4
+- MySQL
+- Spring Data JPA
+- BCrypt (비밀번호 암호화)
+- Lombok
+- Redis
+- AWS Cloud
+- Docker
+
 ## 기능 💡
 
 ### 인증 🔐
