@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -88,5 +89,12 @@ public class Review extends BaseTime {
     if (requestDto.starPoint() != null) {
       this.starPoint = requestDto.starPoint();
     }
+  }
+
+  public static Shop shopIsNotClosingValidate(Optional<Shop> shop, Long shopId) {
+    if(shop.isEmpty()) {
+      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+    }
+    return shop.get();
   }
 }
