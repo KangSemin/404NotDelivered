@@ -17,6 +17,8 @@ import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +38,13 @@ public class ReviewService {
       throw new OnlyOneDataException("One Purchase, One Review");
     }
     Purchase purchase = purchaseRepository.findById(requestDto.purchaseId()).orElseThrow(
-        () -> new IllegalArgumentException(
+        () -> new EntityNotFoundException(
             "Purchase not found with ID:" + requestDto.purchaseId()));
 
     Review.validReview(userId, purchase);
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("User not found with ID:" + userId));
+        .orElseThrow(() -> new EntityNotFoundException("User not found with ID:" + userId));
 
     Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(purchase.getShop().getShopId());
     Shop shop = Review.shopIsNotClosingValidate(optionalShop,purchase.getShop().getShopId());
@@ -57,7 +59,7 @@ public class ReviewService {
 
   public void deleteReview(Long userId, Long reviewId) {
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
+        .orElseThrow(() -> new EntityNotFoundException("Review not found with ID:" + reviewId));
 
     Review.ownerValidate(review, userId);
     reviewRepository.delete(review);
@@ -66,10 +68,10 @@ public class ReviewService {
 
   public ReviewDto updateReview(Long userId, Long reviewId, ReviewUpdateRequestDto requestDto) {
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
+        .orElseThrow(() -> new EntityNotFoundException("Review not found with ID:" + reviewId));
 
     if(shopRepository.findByShopIdAndIsClosing(review.getShop().getShopId()).isEmpty()) {
-      throw new IllegalArgumentException("Shop not found with ID:" + review.getShop().getShopId());
+      throw new EntityNotFoundException("Shop not found with ID:" + review.getShop().getShopId());
     }
 
     Review.ownerValidate(review, userId);
@@ -84,7 +86,7 @@ public class ReviewService {
   public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
 
     if(shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
-      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+      throw new EntityNotFoundException("Shop not found with ID:" + shopId);
     }
 
     List<Review> reviewList = reviewRepository.findAllByShopShopIdAndStarPointBetweenOrderByCreatedAtDesc(

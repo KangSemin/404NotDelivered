@@ -14,6 +14,8 @@ import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,7 @@ public class ShopService {
     User foundUser =
         userRepository
             .findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
     Shop newShop =
         Shop.builder()
@@ -71,7 +73,7 @@ public class ShopService {
     List<Shop> foundShopList = shopRepository.findByShopName(shopName);
 
     if (foundShopList.isEmpty()) {
-      throw new IllegalArgumentException("Shop not found");
+      throw new EntityNotFoundException("Shop not found");
     }
 
     return foundShopList.stream()
@@ -94,7 +96,7 @@ public class ShopService {
     Shop foundShop =
         shopRepository
             .findByShopIdAndIsClosing(shopId)
-            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Shop not found"));
 
     List<Menu> foundMenuList = menuRepository.findAllByShopId(foundShop.getShopId());
 
@@ -138,7 +140,7 @@ public class ShopService {
     Shop foundShop =
         shopRepository
             .findById(shopId)
-            .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Shop not found"));
 
     foundShop.validShopOwner(userId, foundShop.getOwnerUser().getUserId());
 

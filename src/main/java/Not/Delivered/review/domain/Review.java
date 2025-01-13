@@ -7,15 +7,8 @@ import Not.Delivered.purchase.domain.PurchaseStatus;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.user.domain.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.Builder;
@@ -93,7 +86,7 @@ public class Review extends BaseTime {
 
   public static Shop shopIsNotClosingValidate(Optional<Shop> shop, Long shopId) {
     if(shop.isEmpty()) {
-      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+      throw new EntityNotFoundException("Shop not found with ID:" + shopId);
     }
     return shop.get();
   }
