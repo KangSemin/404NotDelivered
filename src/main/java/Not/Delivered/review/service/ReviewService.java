@@ -1,16 +1,14 @@
 package Not.Delivered.review.service;
 
-import Not.Delivered.comment.domain.Dto.CommentReviewDto;
 import Not.Delivered.comment.repository.CommentRepository;
 import Not.Delivered.common.exception.OnlyOneDataException;
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.repository.PurchaseRepository;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
-import Not.Delivered.review.domain.Dto.ReviewListDto;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
-import Not.Delivered.review.domain.Review;
 import Not.Delivered.review.domain.Dto.ReviewWithCommentDto;
+import Not.Delivered.review.domain.Review;
 import Not.Delivered.review.repository.ReviewRepository;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.repository.ShopRepository;
@@ -45,8 +43,9 @@ public class ReviewService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("User not found with ID:" + userId));
 
-    Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(purchase.getShop().getShopId());
-    Shop shop = Review.shopIsNotClosingValidate(optionalShop,purchase.getShop().getShopId());
+    Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(
+        purchase.getShop().getShopId());
+    Shop shop = Review.shopIsNotClosingValidate(optionalShop, purchase.getShop().getShopId());
 
     Review review = Review.builder().reviewContent(requestDto.reviewContent())
         .starPoint(requestDto.starPoint()).purchase(purchase).shop(shop).user(user).build();
@@ -69,7 +68,7 @@ public class ReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
 
-    if(shopRepository.findByShopIdAndIsClosing(review.getShop().getShopId()).isEmpty()) {
+    if (shopRepository.findByShopIdAndIsClosing(review.getShop().getShopId()).isEmpty()) {
       throw new IllegalArgumentException("Shop not found with ID:" + review.getShop().getShopId());
     }
 
@@ -82,9 +81,9 @@ public class ReviewService {
     return ReviewDto.convertDto(review);
   }
 
-//  public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+//  public List<ReviewListDto> getShopsssReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
 //
-//    if(shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
+//    if (shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
 //      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
 //    }
 //
@@ -103,26 +102,28 @@ public class ReviewService {
 //
 //  }
 
-  public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+  public List<ReviewWithCommentDto> getShopReview(Long shopId, Long minStarPoint,
+      Long maxStarPoint) {
     if (shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
       throw new IllegalArgumentException("Shop not found with ID: " + shopId);
     }
 
     // DTO 리스트를 가져옴
-    List<ReviewWithCommentDto> results = reviewRepository.findReviewsWithComment(shopId, minStarPoint, maxStarPoint);
+    List<ReviewWithCommentDto> results = reviewRepository.findReviewsWithComment(shopId,
+        minStarPoint, maxStarPoint);
 
     // ReviewListDto로 변환하여 반환
     return results.stream()
-        .map(dto -> ReviewListDto.builder()
+        .map(dto -> ReviewWithCommentDto.builder()
+            .reviewId(dto.getReviewId())
             .userId(dto.getUserId())
             .createdAt(dto.getCreatedAt())
-            .updatedAt(dto.getLastModifiedAt())
+            .lastModifiedAt(dto.getLastModifiedAt())
             .starPoint(dto.getStarPoint())
             .reviewContent(dto.getReviewContent())
             .shopId(dto.getShopId())
-            .reviewId(dto.getReviewId())
             .purchaseId(dto.getPurchaseId())
-            .comment(CommentReviewDto.convertDto(dto.getComment()))
+            .commentContent(dto.getCommentContent())
             .build())
         .toList();
   }

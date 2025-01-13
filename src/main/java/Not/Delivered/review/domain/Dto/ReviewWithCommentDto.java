@@ -1,11 +1,12 @@
 package Not.Delivered.review.domain.Dto;
 
-import Not.Delivered.comment.domain.Comment;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 public class ReviewWithCommentDto {
+
   private Long reviewId;
   private Long userId;
   private LocalDateTime createdAt;
@@ -14,11 +15,14 @@ public class ReviewWithCommentDto {
   private String reviewContent;
   private Long shopId;
   private Long purchaseId;
-  private Comment comment;
 
+  //  private Comment comment;
+  private String commentContent;
+
+  @Builder
   public ReviewWithCommentDto(Long reviewId, Long userId, LocalDateTime createdAt,
       LocalDateTime lastModifiedAt, Long starPoint, String reviewContent, Long shopId,
-      Long purchaseId, Comment comment) {
+      Long purchaseId, String commentContent) {
     this.reviewId = reviewId;
     this.userId = userId;
     this.createdAt = createdAt;
@@ -27,7 +31,7 @@ public class ReviewWithCommentDto {
     this.reviewContent = reviewContent;
     this.shopId = shopId;
     this.purchaseId = purchaseId;
-    this.comment = comment;
+    this.commentContent = commentContent;
   }
 }
 

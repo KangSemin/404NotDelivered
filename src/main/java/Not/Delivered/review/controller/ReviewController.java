@@ -3,8 +3,8 @@ package Not.Delivered.review.controller;
 import Not.Delivered.common.dto.ApiResponse;
 import Not.Delivered.review.domain.Dto.ReviewCreateRequestDto;
 import Not.Delivered.review.domain.Dto.ReviewDto;
-import Not.Delivered.review.domain.Dto.ReviewListDto;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
+import Not.Delivered.review.domain.Dto.ReviewWithCommentDto;
 import Not.Delivered.review.service.ReviewService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -56,13 +56,45 @@ public class ReviewController {
   }
 
   @GetMapping("/shops/{shopId}")
-  public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopReview(@PathVariable Long shopId,
+  public ResponseEntity<ApiResponse<List<ReviewWithCommentDto>>> getShopReview(
+      @PathVariable Long shopId,
       @RequestParam(defaultValue = "1") Long minStarPoint,
       @RequestParam(defaultValue = "5") Long maxStarPoint) {
-    List<ReviewListDto> reviewDtos = reviewService.getShopReview(shopId, minStarPoint,
+    long startTime = System.currentTimeMillis();
+    List<ReviewWithCommentDto> reviewDtos = reviewService.getShopReview(shopId, minStarPoint,
         maxStarPoint);
-    ApiResponse<List<ReviewListDto>> apiResponse = ApiResponse.success(HttpStatus.OK, "가게 리뷰 조회 성공",
+    ApiResponse<List<ReviewWithCommentDto>> apiResponse = ApiResponse.success(HttpStatus.OK,
+        "가게 리뷰 조회 성공",
         reviewDtos);
+
+    long endTime = System.currentTimeMillis();
+
+    System.out.println(endTime - startTime + "ms");
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
+
+  // 단 3건!
+  // 143ms -> 3ms
+  // 1건 : 3ms, 1000건 3s
+
+  // 13건 쿼리 27개 -> 2개(ㅋㅋㅋ)
+  // 176ms -> 54ms -> 44ms -> 39ms -> 데이터 1건 추가 -> 51ms (아예 새로 가져오지는 않는 듯함)
+  // 100ms -> 6ms
+
+//  @GetMapping("/shops/{shopId}")
+//  public ResponseEntity<ApiResponse<List<ReviewListDto>>> getShopssReview(
+//      @PathVariable Long shopId,
+//      @RequestParam(defaultValue = "1") Long minStarPoint,
+//      @RequestParam(defaultValue = "5") Long maxStarPoint) {
+//    Long startTime = System.currentTimeMillis();
+//    List<ReviewListDto> reviewDtos = reviewService.getShopsssReview(shopId, minStarPoint,
+//        maxStarPoint);
+//    ApiResponse<List<ReviewListDto>> apiResponse = ApiResponse.success(HttpStatus.OK,
+//        "가게 리뷰 조회 성공",
+//        reviewDtos);
+//
+//    Long endTime = System.currentTimeMillis();
+//    System.out.println(endTime - startTime + "ms");
+//    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+//  }
 }

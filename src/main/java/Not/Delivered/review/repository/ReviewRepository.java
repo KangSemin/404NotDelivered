@@ -23,7 +23,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                                                                         r.reviewContent,
                                                                         r.shop.shopId,
                                                                         r.purchase.purchaseId,
-                                                                        (SELECT c FROM Comment c WHERE c.review.reviewId = r.reviewId)
+                                                                        (SELECT c.commentContent FROM Comment c WHERE c.review.reviewId = r.reviewId)
                                                                     )
                                                                     FROM Review r
                                                                     WHERE r.shop.shopId = :shopId
