@@ -40,7 +40,7 @@ public class User extends BaseTime {
   private String phoneNumber;
 
 
-  @Column(name = "is_withdrawal")
+  @Column(name = "is_withdrawal", nullable = false)
   @Setter
   private Boolean isWithdrawal = false;
 
