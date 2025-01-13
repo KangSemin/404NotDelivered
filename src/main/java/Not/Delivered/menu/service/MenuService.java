@@ -1,5 +1,6 @@
 package Not.Delivered.menu.service;
 
+import Not.Delivered.common.exception.AccessDeniedException;
 import Not.Delivered.menu.domain.Menu;
 import Not.Delivered.menu.dto.MenuCreateRequestDto;
 import Not.Delivered.menu.dto.MenuCreateResponseDto;
@@ -9,6 +10,7 @@ import Not.Delivered.menu.repository.MenuRepository;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.service.ShopService;
 import Not.Delivered.user.domain.UserStatus;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ public class MenuService {
       Long userId, UserStatus userRole, MenuCreateRequestDto dto) {
 
     if (!userRole.equals(UserStatus.OWNER)) {
-      throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
+      throw new AccessDeniedException("사장님만 사용할 수 있는 기능입니다.");
     }
 
     Shop foundShop = shopService.foundAndValidate(userId, dto.getShopId());
@@ -44,7 +46,7 @@ public class MenuService {
   public MenuUpdateResponseDto updateMenu(
       Long userId, UserStatus userRole, Long menuId, MenuUpdateRequestDto dto) {
     if (!userRole.equals(UserStatus.OWNER)) {
-      throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
+      throw new AccessDeniedException("사장님만 사용할 수 있는 기능입니다.");
     }
 
     shopService.foundAndValidate(userId, dto.getShopId());
@@ -52,7 +54,7 @@ public class MenuService {
     Menu foundMenu =
         menuRepository
             .findById(menuId)
-            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Menu not found"));
 
     foundMenu.updateMenuInfo(dto);
 
@@ -65,7 +67,7 @@ public class MenuService {
   @Transactional
   public void deleteMenu(Long userId, UserStatus userRole, Long shopId, Long menuId) {
     if (!userRole.equals(UserStatus.OWNER)) {
-      throw new IllegalArgumentException("사장님만 사용할 수 있는 기능입니다.");
+      throw new AccessDeniedException("사장님만 사용할 수 있는 기능입니다.");
     }
 
     shopService.foundAndValidate(userId, shopId);
@@ -73,7 +75,7 @@ public class MenuService {
     Menu foundMenu =
         menuRepository
             .findById(menuId)
-            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Menu not found"));
 
     shopService.foundAndValidate(userId, shopId);
     foundMenu.deletedMenu();

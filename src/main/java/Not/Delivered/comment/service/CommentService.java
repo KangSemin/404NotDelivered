@@ -13,6 +13,8 @@ import Not.Delivered.shop.repository.ShopRepository;
 import Not.Delivered.user.domain.User;
 import Not.Delivered.user.repository.UserRepository;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ public class CommentService {
     }
 
     Review review = reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new IllegalArgumentException("Review not found with ID:" + reviewId));
+        .orElseThrow(() -> new EntityNotFoundException("Review not found with ID:" + reviewId));
 
     Optional<Shop> optionalShop = shopRepository.findByShopIdAndIsClosing(
         review.getShop().getShopId());
@@ -41,7 +43,7 @@ public class CommentService {
     Comment.shopOwnerValidate(shop, userId);
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("User not fount with ID:" + userId));
+        .orElseThrow(() -> new EntityNotFoundException("User not fount with ID:" + userId));
 
     Comment comment = Comment.builder().commentContent(requestDto.commentContent()).user(user)
         .review(review).build();
@@ -53,7 +55,7 @@ public class CommentService {
 
   public void deleteComment(Long userId, Long reviewId, Long commentId) {
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
+        .orElseThrow(() -> new EntityNotFoundException("Comment not found with ID:" + commentId));
     Comment.commentReviewAndUserValidate(comment, reviewId, userId);
     commentRepository.delete(comment);
   }
@@ -61,11 +63,11 @@ public class CommentService {
   public CommentDto updateComment(Long userId, Long reviewId, Long commentId,
       CommentUpdateRequestDto requestDto) {
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID:" + commentId));
+        .orElseThrow(() -> new EntityNotFoundException("Comment not found with ID:" + commentId));
 
     if (shopRepository.findByShopIdAndIsClosing(comment.getReview().getShop().getShopId())
         .isEmpty()) {
-      throw new IllegalArgumentException(
+      throw new EntityNotFoundException(
           "Shop not found with ID:" + comment.getReview().getShop().getShopId());
     }
 

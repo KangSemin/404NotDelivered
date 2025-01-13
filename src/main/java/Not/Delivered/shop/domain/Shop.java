@@ -1,6 +1,7 @@
 package Not.Delivered.shop.domain;
 
 import Not.Delivered.common.entity.Address;
+import Not.Delivered.common.exception.AccessDeniedException;
 import Not.Delivered.shop.dto.ShopUpdateRequestDto;
 import Not.Delivered.user.domain.User;
 import jakarta.persistence.AttributeOverride;
@@ -92,7 +93,7 @@ public class Shop {
 
   public void validShopOwner(Long userId, Long ownerUserId) {
     if (!Objects.equals(userId, ownerUserId)) {
-      throw new IllegalArgumentException("해당 가게에 대한 권한이 없습니다.");
+      throw new AccessDeniedException("해당 가게에 대한 권한이 없습니다.");
     }
   }
 

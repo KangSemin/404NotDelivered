@@ -1,11 +1,9 @@
 package Not.Delivered.common.exception;
 
 import Not.Delivered.common.dto.ApiResponse;
-import Not.Delivered.purchase.service.AccessDeniedException;
 import Not.Delivered.purchase.service.PurchaseNotFoundException;
 import Not.Delivered.purchase.service.UnauthorizedActionException;
 import Not.Delivered.user.service.TempUserNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
   }
 
-  @ExceptionHandler({OwnerDataException.class, TempUserNotFoundException.class,
+  @ExceptionHandler({OwnerDataException.class,
       AccessDeniedException.class, UnauthorizedActionException.class})
   public ResponseEntity<ApiResponse> handleOwnerDataException(RuntimeException exception) {
     ApiResponse apiResponse = ApiResponse.error(HttpStatus.FORBIDDEN, exception.getMessage());
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler({PurchaseNotFoundException.class, EntityNotFoundException.class})
+  @ExceptionHandler({PurchaseNotFoundException.class, TempUserNotFoundException.class})
   public ResponseEntity<ApiResponse> handlePurchaseNotFoundException(RuntimeException exception) {
     ApiResponse apiResponse = ApiResponse.error(HttpStatus.NOT_FOUND, exception.getMessage());
     log.info("{}, {}", exception.getStackTrace()[0], exception.getMessage());

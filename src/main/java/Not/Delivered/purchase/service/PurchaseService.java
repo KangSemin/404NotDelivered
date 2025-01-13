@@ -1,5 +1,6 @@
 package Not.Delivered.purchase.service;
 
+import Not.Delivered.common.exception.AccessDeniedException;
 import Not.Delivered.menu.domain.Menu;
 import Not.Delivered.menu.repository.MenuRepository;
 import Not.Delivered.purchase.domain.Purchase;
