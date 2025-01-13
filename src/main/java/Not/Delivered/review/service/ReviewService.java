@@ -10,6 +10,7 @@ import Not.Delivered.review.domain.Dto.ReviewDto;
 import Not.Delivered.review.domain.Dto.ReviewListDto;
 import Not.Delivered.review.domain.Dto.ReviewUpdateRequestDto;
 import Not.Delivered.review.domain.Review;
+import Not.Delivered.review.domain.Dto.ReviewWithCommentDto;
 import Not.Delivered.review.repository.ReviewRepository;
 import Not.Delivered.shop.domain.Shop;
 import Not.Delivered.shop.repository.ShopRepository;
@@ -81,25 +82,49 @@ public class ReviewService {
     return ReviewDto.convertDto(review);
   }
 
-  public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+//  public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+//
+//    if(shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
+//      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+//    }
+//
+//    List<Review> reviewList = reviewRepository.findAllByShopShopIdAndStarPointBetweenOrderByCreatedAtDesc(
+//        shopId, minStarPoint, maxStarPoint);
+////TODO 해당 로직이 리뷰 한건당 쿼리 하나씩 추가로 날려서 고민해보고 로직 변경 예정
+//    return reviewList.stream().map(
+//        review -> ReviewListDto.builder().userId(review.getUser().getUserId())
+//            .createdAt(review.getCreatedAt()).updatedAt(review.getLastModifiedAt())
+//            .starPoint(review.getStarPoint()).reviewContent(review.getReviewContent())
+//            .shopId(review.getShop().getShopId()).reviewId(review.getReviewId())
+//            .purchaseId(review.getPurchase().getPurchaseId()).comment(
+//                Optional.ofNullable(commentRepository.findByReviewReviewId(review.getReviewId()))
+//                    .map(CommentReviewDto::convertDto).orElse(null)).build()).toList();
+//
+//
+//  }
 
-    if(shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
-      throw new IllegalArgumentException("Shop not found with ID:" + shopId);
+  public List<ReviewListDto> getShopReview(Long shopId, Long minStarPoint, Long maxStarPoint) {
+    if (shopRepository.findByShopIdAndIsClosing(shopId).isEmpty()) {
+      throw new IllegalArgumentException("Shop not found with ID: " + shopId);
     }
 
-    List<Review> reviewList = reviewRepository.findAllByShopShopIdAndStarPointBetweenOrderByCreatedAtDesc(
-        shopId, minStarPoint, maxStarPoint);
-//TODO 해당 로직이 리뷰 한건당 쿼리 하나씩 추가로 날려서 고민해보고 로직 변경 예정
-    return reviewList.stream().map(
-        review -> ReviewListDto.builder().userId(review.getUser().getUserId())
-            .createdAt(review.getCreatedAt()).updatedAt(review.getLastModifiedAt())
-            .starPoint(review.getStarPoint()).reviewContent(review.getReviewContent())
-            .shopId(review.getShop().getShopId()).reviewId(review.getReviewId())
-            .purchaseId(review.getPurchase().getPurchaseId()).comment(
-                Optional.ofNullable(commentRepository.findByReviewReviewId(review.getReviewId()))
-                    .map(CommentReviewDto::convertDto).orElse(null)).build()).toList();
+    // DTO 리스트를 가져옴
+    List<ReviewWithCommentDto> results = reviewRepository.findReviewsWithComment(shopId, minStarPoint, maxStarPoint);
 
-
+    // ReviewListDto로 변환하여 반환
+    return results.stream()
+        .map(dto -> ReviewListDto.builder()
+            .userId(dto.getUserId())
+            .createdAt(dto.getCreatedAt())
+            .updatedAt(dto.getLastModifiedAt())
+            .starPoint(dto.getStarPoint())
+            .reviewContent(dto.getReviewContent())
+            .shopId(dto.getShopId())
+            .reviewId(dto.getReviewId())
+            .purchaseId(dto.getPurchaseId())
+            .comment(CommentReviewDto.convertDto(dto.getComment()))
+            .build())
+        .toList();
   }
 
 }
