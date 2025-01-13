@@ -31,7 +31,7 @@ public class PurchaseTrace {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
 
-    if("GET".equalsIgnoreCase(request.getMethod())){
+    if ("GET".equalsIgnoreCase(request.getMethod())) {
       return joinPoint.proceed();
     }
 
@@ -41,55 +41,52 @@ public class PurchaseTrace {
     return result;
   }
 
-  private String getLogMessage(HttpServletRequest request, Object result) {
-    StringBuilder logMessage = new StringBuilder();
-
-    String purchaseId = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getPurchaseId().toString();
-    String shopId = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getShopId().toString();
-    String purchaseStatus = ((PurchaseDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getPurchaseStatus().toString();
-
-    logMessage.append("[purchase log ").append(LocalDateTime.now()).append("] : requestUser = ")
-        .append(request.getAttribute("userId")).append(", requestURL = ")
-        .append(request.getRequestURI()).append(", purchase ID = ").append(purchaseId)
-        .append(", shop ID = ").append(shopId).append(", purchaseStatus = ").append(purchaseStatus);
-
-    return logMessage.toString();
-  }
-
   @Around("execution(public * Not.Delivered.purchase.controller.PurchaseRiderController.*(..))")
   public Object purchaseRiderLogging(ProceedingJoinPoint joinPoint) throws Throwable {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
 
-    if("GET".equalsIgnoreCase(request.getMethod())){
+    if ("GET".equalsIgnoreCase(request.getMethod())) {
       return joinPoint.proceed();
     }
 
     Object result = joinPoint.proceed();
-    logger.info(getRiderLogMessage(request,result));
+    logger.info(getRiderLogMessage(request, result));
 
     return result;
   }
 
+  private String getLogMessage(HttpServletRequest request, Object result) {
+
+    String purchaseId = ((PurchaseDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getPurchaseId()
+        .toString();
+    String shopId = ((PurchaseDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getShopId()
+        .toString();
+    String purchaseStatus = ((PurchaseDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getPurchaseStatus()
+        .toString();
+
+    return writeLogmessage(request, purchaseId, shopId, purchaseStatus);
+  }
+
   private String getRiderLogMessage(HttpServletRequest request, Object result) {
-    StringBuilder logMessage = new StringBuilder();
 
-    String purchaseId = ((PurchaseOfRiderDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getPurchaseId().toString();
-    String shopId = ((PurchaseOfRiderDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getShopId().toString();
-    String purchaseStatus = ((PurchaseOfRiderDto)((ApiResponse) ((ResponseEntity) result)
-        .getBody()).getData()).getPurchaseStatus().toString();
+    String purchaseId = ((PurchaseOfRiderDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getPurchaseId()
+        .toString();
+    String shopId = ((PurchaseOfRiderDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getShopId()
+        .toString();
+    String purchaseStatus = ((PurchaseOfRiderDto) ((ApiResponse) ((ResponseEntity) result).getBody()).getData()).getPurchaseStatus()
+        .toString();
 
-    logMessage.append("[purchase log ").append(LocalDateTime.now()).append("] : requestUser = ")
-        .append(request.getAttribute("userId")).append(", requestURL = ")
-        .append(request.getRequestURI()).append(", purchase ID = ").append(purchaseId)
-        .append(", shop ID = ").append(shopId).append(", purchaseStatus = ").append(purchaseStatus);
+    return writeLogmessage(request, purchaseId, shopId, purchaseStatus);
+  }
 
-    return logMessage.toString();
+  private String writeLogmessage(HttpServletRequest request, String purchaseId, String shopId,
+      String purchaseStatus) {
+    String logMessage = "[purchase log " + LocalDateTime.now() + "] : requestUser = "
+        + request.getAttribute("userId") + ", requestURL = "
+        + request.getRequestURI() + ", purchase ID = " + purchaseId
+        + ", shop ID = " + shopId + ", purchaseStatus = " + purchaseStatus;
+    return logMessage;
   }
 }
 
