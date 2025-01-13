@@ -57,6 +57,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     normalUserApis.put("/users",null);
     normalUserApis.put("/users/**",null);
     normalUserApis.put("/reviews","Post");
+    normalUserApis.put("/reviews/shops/**","GET");
     normalUserApis.put("/reviews/{reviewId}",null);
     normalUserApis.put("/reviews/{reviewId}/comments","Get");
     normalUserApis.put("/shops","Get");
