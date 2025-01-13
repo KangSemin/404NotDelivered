@@ -22,7 +22,7 @@ public class User extends BaseTime {
   @Column(name = "user_id")
   private Long userId;
 
-  //    // 필요한 경우에만 Setter 메서드 구현
+// 필요한 경우에만 Setter 메서드 구현
   @Column(name = "user_name", nullable = false)
   private String userName;
 

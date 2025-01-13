@@ -2,10 +2,8 @@ package Not.Delivered.purchase.dto;
 
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
-
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class PurchaseDto {
@@ -31,14 +29,10 @@ public class PurchaseDto {
   }
 
   public static PurchaseDto convertToDto(Purchase purchase) {
-    return PurchaseDto.builder()
-        .purchaseId(purchase.getPurchaseId())
-        .purchaseUserId(purchase.getPurchaseUser().getUserId())
-        .deliveringUserId(purchase.getDeliveringUser() != null ? purchase.getDeliveringUser().getUserId() : null)
-        .shopId(purchase.getShop().getShopId())
-        .menuId(purchase.getMenu().getMenuId())
-        .purchaseStatus(purchase.getPurchaseStatus())
-        .isCancelled(purchase.isCancelled())
-        .build();
+    return PurchaseDto.builder().purchaseId(purchase.getPurchaseId())
+        .purchaseUserId(purchase.getPurchaseUser().getUserId()).deliveringUserId(
+            purchase.getDeliveringUser() != null ? purchase.getDeliveringUser().getUserId() : null)
+        .shopId(purchase.getShop().getShopId()).menuId(purchase.getMenu().getMenuId())
+        .purchaseStatus(purchase.getPurchaseStatus()).isCancelled(purchase.isCancelled()).build();
   }
 }

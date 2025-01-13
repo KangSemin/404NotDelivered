@@ -4,6 +4,7 @@ import Not.Delivered.menu.dto.MenuUpdateRequestDto;
 import Not.Delivered.shop.domain.Shop;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,7 +27,7 @@ public class Menu {
   @Column(name = "menu_id")
   private Long menuId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "shop_id")
   private Shop shop;
 
