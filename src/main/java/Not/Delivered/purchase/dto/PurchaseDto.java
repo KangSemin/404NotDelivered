@@ -1,4 +1,3 @@
-package Not.Delivered.purchase.dto;
 
 import Not.Delivered.purchase.domain.Purchase;
 import Not.Delivered.purchase.domain.PurchaseStatus;
@@ -9,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 public class PurchaseDto {
-
   private final Long purchaseId;
   private final Long purchaseUserId;
   private final Long deliveringUserId;
@@ -17,7 +15,6 @@ public class PurchaseDto {
   private final Long menuId;
   private final PurchaseStatus purchaseStatus;
   private final boolean isCancelled;
-
   @Builder
   public PurchaseDto(Long purchaseId, Long purchaseUserId, Long deliveringUserId, Long shopId,
       Long menuId, PurchaseStatus purchaseStatus, boolean isCancelled) {
